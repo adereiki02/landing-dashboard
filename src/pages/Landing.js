@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../components/common/Navbar';
 import Hero from '../components/landing/Hero';
 import Features from '../components/landing/Features';
-import '../styles/Landing.css';
+import Testimonials from '../components/landing/Testimonials';
+import Footer from '../components/common/Footer';
 
 function Landing() {
+  useEffect(() => {
+    document.title = "ReiKiDevs - Solusi IT Terbaik";
+  }, []);
+  
   return (
     <div className="landing-page">
       <Navbar />
       <Hero />
       <Features />
-      <footer className="footer">
-        <p>&copy; 2023 Your Company. All rights reserved.</p>
-      </footer>
+      <Testimonials />
+      <Footer />
     </div>
   );
 }

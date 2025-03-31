@@ -1,16 +1,29 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import Button from '../common/Button';
 
 function Hero() {
+  const scrollToFeatures = () => {
+    document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <section className="hero">
-      <div className="hero-content">
-        <h1>Selamat Datang di Aplikasi Kami</h1>
-        <p>Solusi terbaik untuk kebutuhan Anda</p>
-        <Link to="/dashboard" className="btn btn-large">Mulai Sekarang</Link>
-      </div>
-      <div className="hero-image">
-        <img src="/images/hero-image.svg" alt="Hero" />
+    <section id="home" className="hero-section">
+      <div className="hero-container">
+        <div className="hero-content">
+          <h1>Selamat Datang di <span>ReiKiDevs</span></h1>
+          <h2>Kerjasama dan Solusi IT Terbaik untuk Anda!</h2>
+          <p>
+            Kami menyediakan layanan pengembangan web, desain grafis, dan solusi digital
+            yang akan membantu bisnis Anda tumbuh di era digital.
+          </p>
+          <Button className="cta-button" onClick={scrollToFeatures}>
+            Jelajahi Layanan Kami
+          </Button>
+        </div>
+        <div className="hero-image">
+          <div className="hero-image-placeholder">
+            <div className="hero-graphic"></div>
+          </div>
+        </div>
       </div>
     </section>
   );

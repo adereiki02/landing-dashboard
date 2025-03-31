@@ -1,5 +1,3 @@
-import React from 'react';
-import './Button.css'; // Anda perlu membuat file CSS ini juga
 
 function Button({ children, type, onClick, className }) {
   return (
