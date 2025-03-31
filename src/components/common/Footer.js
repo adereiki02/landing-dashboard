@@ -1,3 +1,6 @@
+import React from 'react';
+import logoImage from '../../assets/reikidevelop.png'; // Pastikan untuk menyimpan logo di folder assets
+
 function Footer() {
   const year = new Date().getFullYear();
   
@@ -6,7 +9,7 @@ function Footer() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-logo">
-            <h2>ReiKiDevs</h2>
+            <img src={logoImage} alt="ReiKi Develop Logo" className="footer-logo-image" />
             <p>Solusi Digital Terbaik untuk Bisnis Anda</p>
             
             <div className="contact-info">
@@ -29,7 +32,7 @@ function Footer() {
                   <i className="fab fa-facebook"></i>
                   <span>Facebook</span>
                 </a>
-                <a href="https://linkedin.com/company/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
                   <i className="fab fa-linkedin"></i>
                   <span>LinkedIn</span>
                 </a>
@@ -72,7 +75,7 @@ function Footer() {
         </div>
         
         <div className="footer-bottom">
-          <p>&copy; {year} ReiKiDevs. All Rights Reserved.</p>
+          <p>&copy; {year} Reiki Develops. All Rights Reserved.</p>
         </div>
       </div>
     </footer>

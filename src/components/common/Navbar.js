@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from './Button';
+import logoImage from '../../assets/reikidevelop.png'; // Pastikan untuk menyimpan logo di folder assets
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -34,7 +35,7 @@ function Navbar() {
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
         <div className="navbar-logo">
-          <span>ReiKi</span>Devs
+          <img src={logoImage} alt="ReiKi Develop Logo" className="logo-image" />
         </div>
         <div className={`menu-icon ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}>
           <span></span>

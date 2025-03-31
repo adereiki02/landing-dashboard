@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary-color: #4F46E5;
-  --primary-hover: #4338CA;
-  --secondary-color: #7C3AED;
-  --accent-color: #06B6D4;
+  --primary-color: #0066FF; /* Warna biru tua dari "develop" */
+  --primary-hover: #0055DD;
+  --secondary-color: #3B82F6; /* Warna biru muda dari "reiki" */
+  --accent-color: #60A5FA;
   --light-color: #F9FAFB;
   --dark-color: #111827;
   --gray-color: #6B7280;
@@ -85,8 +85,6 @@ ul {
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
 }
 
 .cta-button {
@@ -132,13 +130,13 @@ ul {
 }
 
 .navbar-logo {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--primary-color);
+  display: flex;
+  align-items: center;
 }
 
-.navbar-logo span {
-  color: var(--secondary-color);
+.logo-image {
+  height: 40px;
+  width: auto;
 }
 
 .nav-menu {
@@ -182,15 +180,162 @@ ul {
   transition: var(--transition);
 }
 
+/* Hero Showcase Styles */
+.hero-showcase {
+  flex: 1;
+  position: relative;
+  min-height: 600px;
+  margin-bottom: 50px;
+  transform: translateY(250px);
+}
+
+.showcase-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+}
+
+.showcase-box {
+  position: absolute;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+  width: 65%;
+  max-width: 420px;
+}
+
+.showcase-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.showcase-box:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.showcase-1 {
+  top: 20px;
+  right: 10%;
+  z-index: 4;
+  transform: rotate(3deg);
+}
+
+.showcase-2 {
+  top: 100px;
+  left: 0;
+  z-index: 3;
+  transform: rotate(-5deg);
+}
+
+.showcase-3 {
+  top: 45%;
+  right: -20%;
+  z-index: 5;
+  transform: rotate(-3deg);
+}
+
+.showcase-4 {
+  bottom: -50px;
+  left: 10%;
+  z-index: 1;
+  transform: rotate(2deg);
+}
+
+.showcase-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px 15px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.showcase-label h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.showcase-label p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--gray-color);
+}
+
+.logo-watermark {
+  position: absolute;
+  bottom: 10%;
+  right: 15%;
+  width: 120px;
+  opacity: 0.8;
+  z-index: 5;
+}
+
+.logo-watermark img {
+  width: 100%;
+  height: auto;
+}
+
+/* Decorative elements */
+.decorative-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px dashed rgba(67, 97, 238, 0.3);
+}
+
+.circle-1 {
+  width: 150px;
+  height: 150px;
+  top: -20px;
+  right: -40px;
+}
+
+.circle-2 {
+  width: 80px;
+  height: 80px;
+  bottom: 20%;
+  left: 5%;
+}
+
+.decorative-line {
+  position: absolute;
+  background: linear-gradient(90deg, var(--primary-color), transparent);
+  height: 2px;
+}
+
+.line-1 {
+  width: 150px;
+  top: 20%;
+  left: -30px;
+  transform: rotate(45deg);
+}
+
+.line-2 {
+  width: 100px;
+  bottom: 10%;
+  right: 15%;
+  transform: rotate(-30deg);
+}
+
 /* Hero Section */
 .hero-section {
-  padding: 10rem 0 7rem;
-  background: linear-gradient(to right, #F9FAFB, #EFF6FF);
-  min-height: 100vh;
+  padding: 5rem 0 8rem; /* Kurangi padding atas, tambah padding bawah */
+  min-height: 90vh; /* Kurangi dari 100vh ke 90vh */
   display: flex;
   align-items: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Ubah dari hidden ke visible untuk showcase yang lebih ke bawah */
 }
 
 .hero-section::before {
@@ -219,20 +364,21 @@ ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 3rem;
+  gap: 2rem;
   width: 90%;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  padding-bottom: 3rem;
 }
 
 .hero-content {
-  flex: 1;
+  flex: 0 0 45%;
 }
 
 .hero-content h1 {
-  font-size: 3.5rem;
+  font-size: 3.2rem;
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1.5rem;
@@ -282,12 +428,7 @@ ul {
 }
 
 .hero-graphic {
-  width: 90%;
-  height: 90%;
-  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-  border-radius: 16px;
-  position: relative;
-  overflow: hidden;
+  background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
 }
 
 .hero-graphic::before {
@@ -341,10 +482,7 @@ ul {
 }
 
 .service-icon {
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
-  display: inline-block;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -510,6 +648,7 @@ ul {
   line-height: 1.7;
 }
 
+
 .contact-info h3 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -623,15 +762,57 @@ ul {
   color: #9CA3AF;
 }
 
+@media (max-width: 1200px) {
+  .showcase-box {
+    width: 60%;
+  }
+}
+
 /* Responsive Styles */
 @media (max-width: 992px) {
+  .hero-showcase {
+    margin-top: 30px;
+    height: 650px;
+    margin-bottom: 70px;
+  }
+  
+  .showcase-box {
+    width: 70%;
+  }
+  
+  .showcase-1 {
+    right: 5%;
+    top: 0;
+  }
+  
+  .showcase-2 {
+    left: 5%;
+    top: 15%;
+  }
+  
+  .showcase-3 {
+    right: 0;
+    top: 40%;
+  }
+  
+  .showcase-4 {
+    left: 0;
+    bottom: -70px;
+  }
+
+  .features-section {
+    padding-top: 7rem; /* Tambah padding atas */
+    position: relative;
+    z-index: 5; /* Pastikan section berikutnya ada di atas */
+  }
+
   .hero-container {
     flex-direction: column;
   }
   
   .hero-content {
+    flex: 0 0 100%;
     text-align: center;
-    margin-bottom: 3rem;
   }
   
   .hero-content p {
@@ -700,9 +881,33 @@ ul {
   .hero-content h1 {
     font-size: 2.5rem;
   }
+
+  .hero-showcase {
+    height: 550px;
+  }
+  
+  .showcase-box {
+    width: 75%;
+  }
 }
 
 @media (max-width: 576px) {
+  .hero-showcase {
+    height: 500px;
+  }
+  
+  .showcase-box {
+    width: 85%;
+  }
+  
+  .showcase-1, .showcase-2, .showcase-3, .showcase-4 {
+    transform: none !important;
+  }
+  
+  .logo-watermark {
+    width: 100px;
+  }
+
   .hero-content h1 {
     font-size: 2.2rem;
   }

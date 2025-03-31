@@ -9,21 +9,21 @@ function Testimonials() {
       name: "Budi Santoso",
       role: "CEO, PT Maju Jaya",
       image: "https://randomuser.me/api/portraits/men/1.jpg",
-      text: "ReiKiDevs telah membantu kami mengembangkan website yang sangat meningkatkan penjualan online kami sebesar 40%. Desain yang menarik dan fungsionalitas yang lengkap!"
+      text: "reikidevs telah membantu kami mengembangkan website yang sangat meningkatkan penjualan online kami sebesar 40%. Desain yang menarik dan fungsionalitas yang lengkap!"
     },
     {
       id: 2,
       name: "Siti Rahayu",
       role: "Marketing Director, StartUp Indonesia",
       image: "https://randomuser.me/api/portraits/women/1.jpg",
-      text: "Layanan SEO dari ReiKiDevs membantu website kami naik ke halaman pertama Google dalam 3 bulan. Tim yang profesional dan hasil yang luar biasa!"
+      text: "Layanan SEO dari reikidevs membantu website kami naik ke halaman pertama Google dalam 3 bulan. Tim yang profesional dan hasil yang luar biasa!"
     },
     {
       id: 3,
       name: "Ahmad Fadli",
       role: "Owner, Fadli Design",
       image: "https://randomuser.me/api/portraits/men/2.jpg",
-      text: "Saya sangat puas dengan kualitas desain grafis dan videografi yang ReiKiDevs buat untuk bisnis saya. Sangat merekomendasikan jasa mereka!"
+      text: "Saya sangat puas dengan kualitas desain grafis dan videografi yang reikidevs buat untuk bisnis saya. Sangat merekomendasikan jasa mereka!"
     }
   ];
 
@@ -42,7 +42,7 @@ function Testimonials() {
       <div className="container">
         <div className="section-header">
           <h2>Testimonial</h2>
-          <p>Apa kata klien kami tentang layanan ReiKiDevs</p>
+          <p>Apa kata klien kami tentang layanan reikidevs</p>
         </div>
         
         <div className="testimonials-slider">

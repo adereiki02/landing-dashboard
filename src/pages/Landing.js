@@ -7,7 +7,7 @@ import Footer from '../components/common/Footer';
 
 function Landing() {
   useEffect(() => {
-    document.title = "ReiKiDevs - Solusi IT Terbaik";
+    document.title = "reikidevs - Solusi IT Terbaik";
   }, []);
   
   return (
