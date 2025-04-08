@@ -58,6 +58,7 @@ function Footer() {
               <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Layanan</a></li>
+                <li><a href="#news">Berita</a></li>
                 <li><a href="#testimonials">Testimonial</a></li>
                 <li><a href="#contact">Kontak</a></li>
               </ul>

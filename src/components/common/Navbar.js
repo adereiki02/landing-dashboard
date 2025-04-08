@@ -50,6 +50,9 @@ function Navbar() {
             <button onClick={() => scrollToSection('features')}>Layanan</button>
           </li>
           <li className="nav-item">
+            <button onClick={() => scrollToSection('news')}>Berita</button>
+          </li>
+          <li className="nav-item">
             <button onClick={() => scrollToSection('testimonials')}>Testimonial</button>
           </li>
           <li className="nav-item">
