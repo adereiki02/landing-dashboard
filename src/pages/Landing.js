@@ -5,6 +5,7 @@ import Features from '../components/landing/Features';
 import NewsCarousel from '../components/landing/NewsCarousel';
 import Testimonials from '../components/landing/Testimonials';
 import Footer from '../components/common/Footer';
+import BackToTop from '../components/common/BackToTop';
 
 function Landing() {
   useEffect(() => {
@@ -19,6 +20,7 @@ function Landing() {
       <NewsCarousel />
       <Testimonials />
       <Footer />
+      <BackToTop />
     </div>
   );
 }

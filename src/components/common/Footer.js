@@ -19,23 +19,22 @@ function Footer() {
                 Hubungi kami sekarang untuk konsultasi gratis!
               </p>
               
-              <div className="social-links">
-                <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="social-link whatsapp">
-                  <i className="fab fa-whatsapp"></i>
-                  <span>WhatsApp</span>
-                </a>
-                <a href="https://instagram.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link instagram">
-                  <i className="fab fa-instagram"></i>
-                  <span>Instagram</span>
-                </a>
-                <a href="https://facebook.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link facebook">
-                  <i className="fab fa-facebook"></i>
-                  <span>Facebook</span>
-                </a>
-                <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
-                  <i className="fab fa-linkedin"></i>
-                  <span>LinkedIn</span>
-                </a>
+              <div className="social-links-container">
+                <h4>Ikuti Kami</h4>
+                <div className="social-links">
+                  <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="social-link whatsapp">
+                    <i className="fab fa-whatsapp"></i>
+                  </a>
+                  <a href="https://instagram.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link instagram">
+                    <i className="fab fa-instagram"></i>
+                  </a>
+                  <a href="https://facebook.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link facebook">
+                    <i className="fab fa-facebook-f"></i>
+                  </a>
+                  <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                    <i className="fab fa-linkedin-in"></i>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
