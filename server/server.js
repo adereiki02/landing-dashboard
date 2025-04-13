@@ -3,12 +3,16 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const connectDB = require('./config/db');
+const { createSuperAdmin } = require('./controllers/authController');
 
 // Initialize Express app
 const app = express();
 
 // Connect to MongoDB
 connectDB();
+
+// Create superadmin user if not exists
+createSuperAdmin();
 
 // Middleware
 app.use(cors());

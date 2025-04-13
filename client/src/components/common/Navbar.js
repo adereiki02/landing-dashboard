@@ -6,10 +6,17 @@ import logoImage from '../../assets/reikidevelop.png'; // Pastikan untuk menyimp
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if user is logged in
+    const storedUserInfo = localStorage.getItem('userInfo');
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setScrolled(true);
@@ -23,6 +30,7 @@ function Navbar() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+  
   // Handle scrolling to section after navigation
   useEffect(() => {
     if (location.pathname === '/' && location.state && location.state.scrollTo) {
@@ -39,6 +47,7 @@ function Navbar() {
       return () => clearTimeout(timer);
     }
   }, [location]);
+  
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -62,6 +71,15 @@ function Navbar() {
     
     setMenuOpen(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    setUserInfo(null);
+    navigate('/');
+  };
+
+  // Check if current page is login or register
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
@@ -93,11 +111,25 @@ function Navbar() {
           <li className="nav-item">
             <button onClick={() => scrollToSection('contact')}>Kontak</button>
           </li>
-          <li className="nav-item">
-            <Link to="/dashboard">
-              <Button className="btn-primary">Dashboard</Button>
-            </Link>
-          </li>
+          
+          {userInfo ? (
+            <>
+              <li className="nav-item">
+                <Link to="/dashboard">
+                  <Button className="btn-primary">Dashboard</Button>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Button className="btn-secondary" onClick={handleLogout}>Logout</Button>
+              </li>
+            </>
+          ) : !isAuthPage && (
+            <li className="nav-item">
+              <Link to="/login">
+                <Button className="btn-primary">Login</Button>
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
