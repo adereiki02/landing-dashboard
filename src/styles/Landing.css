@@ -191,6 +191,15 @@ ul {
   transform: translateY(250px);
 }
 
+/* Mobile showcase styles that will override desktop styles */
+@media (max-width: 992px) {
+  .hero-showcase {
+    transform: translateY(0);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
 .showcase-wrapper {
   position: relative;
   width: 100%;
@@ -207,6 +216,17 @@ ul {
   background: white;
   width: 65%;
   max-width: 420px;
+  z-index: 5; /* Ensure it's above other elements */
+}
+
+/* Mobile showcase-box styles */
+@media (max-width: 992px) {
+  .showcase-box {
+    position: absolute;
+    display: block !important; /* Force display */
+    visibility: visible !important; /* Force visibility */
+    opacity: 1 !important; /* Force opacity */
+  }
 }
 
 .showcase-box img {
@@ -328,13 +348,13 @@ ul {
 }
 
 .hero-section {
-  padding: 5rem 0 8rem; /* Kurangi padding atas, tambah padding bawah */
-  min-height: 90vh; /* Kurangi dari 100vh ke 90vh */
+  padding: 5rem 0 8rem; /* Original padding */
+  min-height: 90vh; /* Reduced from 100vh to 90vh */
   display: flex;
   align-items: center;
   position: relative;
-  overflow-x: hidden; /* Mencegah scroll horizontal */
-  overflow: visible; /* Ubah dari hidden ke visible untuk showcase yang lebih ke bawah */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow: visible; /* Allow showcase boxes to be visible */
 }
 .hero-section::before {
   content: "";
@@ -1049,6 +1069,7 @@ ul {
     margin-top: 30px;
     height: 650px;
     margin-bottom: 70px;
+    transform: translateY(0); /* Reset transform for tablet */
   }
   
   .showcase-box {
@@ -1076,9 +1097,10 @@ ul {
   }
 
   .features-section {
-    padding-top: 7rem; /* Tambah padding atas */
+    padding-top: 7rem; /* Increased top padding */
     position: relative;
-    z-index: 5; /* Pastikan section berikutnya ada di atas */
+    z-index: 5; /* Ensure it appears above the showcase */
+    margin-top: 2rem; /* Add margin to avoid overlap */
   }
 
   .hero-container {
@@ -1173,10 +1195,39 @@ ul {
 
   .hero-showcase {
     height: 550px;
+    transform: translateY(0); /* Reset transform for mobile */
+    overflow: visible;
   }
   
   .showcase-box {
     width: 75%;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Adjust positions for mobile to avoid overlapping */
+  .showcase-1 {
+    top: 0;
+    right: 10%;
+    z-index: 4;
+  }
+  
+  .showcase-2 {
+    top: 130px;
+    left: 10%;
+    z-index: 3;
+  }
+  
+  .showcase-3 {
+    top: 260px;
+    right: 10%;
+    z-index: 2;
+  }
+  
+  .showcase-4 {
+    top: 390px;
+    left: 10%;
+    z-index: 1;
   }
   
   .footer-links {
@@ -1195,19 +1246,45 @@ ul {
 
 @media (max-width: 576px) {
   .hero-showcase {
-    height: 500px;
+    height: 600px; /* Increased height to accommodate stacked boxes */
+    transform: translateY(0);
+    margin-top: 20px;
   }
   
   .showcase-box {
     width: 85%;
+    max-width: 300px;
+    margin: 0 auto;
+    position: absolute;
+    left: 0;
+    right: 0;
   }
   
-  .showcase-1, .showcase-2, .showcase-3, .showcase-4 {
+  /* Stack the showcase boxes vertically with fixed positions */
+  .showcase-1 {
+    top: 0;
+    transform: none !important;
+  }
+  
+  .showcase-2 {
+    top: 150px;
+    transform: none !important;
+  }
+  
+  .showcase-3 {
+    top: 300px;
+    transform: none !important;
+  }
+  
+  .showcase-4 {
+    top: 450px;
     transform: none !important;
   }
   
   .logo-watermark {
-    width: 100px;
+    width: 80px;
+    bottom: 10px;
+    right: 10px;
   }
 
   .hero-content h1 {
@@ -1257,6 +1334,84 @@ ul {
   .footer-menu {
     flex-direction: column;
     gap: 1rem;
+  }
+}
+
+/* Mobile Showcase Styles */
+.mobile-showcase {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  width: 100%;
+}
+
+.mobile-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  position: relative;
+}
+
+.mobile-showcase-item {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.mobile-showcase-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-showcase-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.mobile-showcase-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px 15px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.mobile-showcase-label h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.mobile-showcase-label p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--gray-color);
+}
+
+.mobile-logo-watermark {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.mobile-logo-watermark img {
+  width: 120px;
+  height: auto;
+  opacity: 0.8;
+}
+
+@media (max-width: 576px) {
+  .mobile-showcase-grid {
+    grid-template-columns: 1fr;
   }
 }
 
