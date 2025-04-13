@@ -5,7 +5,6 @@ import megaDigital from '../../assets/mega-digital.png';
 import bpbdJateng from '../../assets/bpbd-jateng.png';
 import psai from '../../assets/psai.png';
 import customerQueue from '../../assets/customer-queue.png';
-import reikiLogo from '../../assets/reikidevelop.png';
 import '../../styles/Portfolio.css';
 
 function Portfolio() {
