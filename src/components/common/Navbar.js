@@ -82,6 +82,12 @@ function Navbar() {
             <button onClick={() => scrollToSection('news')}>Berita</button>
           </li>
           <li className="nav-item">
+            <button onClick={() => scrollToSection('portfolio')}>Portfolio</button>
+          </li>
+          <li className="nav-item">
+            <button onClick={() => scrollToSection('partners')}>Mitra Kerjasama</button>
+          </li>
+          <li className="nav-item">
             <button onClick={() => scrollToSection('testimonials')}>Testimonial</button>
           </li>
           <li className="nav-item">
