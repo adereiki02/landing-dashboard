@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import NewsDetail from './pages/DetailBerita/NewsDetail';
@@ -44,6 +45,7 @@ function App() {
         <Route path="/berita" element={<NewsList />} />
         <Route path="/berita/:id" element={<NewsDetail />} />
       </Routes>
+      <SpeedInsights />
     </Router>
   );
 }
