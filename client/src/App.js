@@ -8,6 +8,10 @@ import NewsDetail from './pages/DetailBerita/NewsDetail';
 import NewsList from './pages/Berita/NewsList';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import NewsManagement from './pages/Dashboard/NewsManagement';
+import PortfolioManagement from './pages/Dashboard/PortfolioManagement';
+import PartnersManagement from './pages/Dashboard/PartnersManagement';
+import WebsiteSettings from './pages/Dashboard/WebsiteSettings';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import './styles/Landing.css';
 import './styles/Dashboard.css';
@@ -37,11 +41,35 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Dashboard Routes */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         } />
+        <Route path="/dashboard/news" element={
+          <ProtectedRoute>
+            <NewsManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/portfolio" element={
+          <ProtectedRoute>
+            <PortfolioManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/partners" element={
+          <ProtectedRoute>
+            <PartnersManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/settings" element={
+          <ProtectedRoute>
+            <WebsiteSettings />
+          </ProtectedRoute>
+        } />
+        
+        {/* Public Routes */}
         <Route path="/berita" element={<NewsList />} />
         <Route path="/berita/:id" element={<NewsDetail />} />
       </Routes>

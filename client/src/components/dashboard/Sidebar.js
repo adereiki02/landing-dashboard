@@ -1,20 +1,60 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaHome, FaNewspaper, FaBriefcase, FaHandshake, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import '../../styles/Dashboard.css';
 
 function Sidebar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    navigate('/');
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h3>Dashboard</h3>
+        <h3>ReikiDevs Admin</h3>
+      </div>
+      <div className="sidebar-user">
+        <div className="user-avatar">
+          {user?.name?.charAt(0) || 'U'}
+        </div>
+        <div className="user-info">
+          <h4>{user?.name || 'User'}</h4>
+          <p>{user?.role || 'Admin'}</p>
+        </div>
       </div>
       <ul className="sidebar-menu">
-        <li className="active"><a href="#dashboard">Dashboard</a></li>
-        <li><a href="#analytics">Analytics</a></li>
-        <li><a href="#reports">Reports</a></li>
-        <li><a href="#settings">Settings</a></li>
+        <li className={location.pathname === '/dashboard' ? 'active' : ''}>
+          <Link to="/dashboard"><FaHome /> Dashboard</Link>
+        </li>
+        <li className={location.pathname === '/dashboard/news' ? 'active' : ''}>
+          <Link to="/dashboard/news"><FaNewspaper /> News Management</Link>
+        </li>
+        <li className={location.pathname === '/dashboard/portfolio' ? 'active' : ''}>
+          <Link to="/dashboard/portfolio"><FaBriefcase /> Portfolio Management</Link>
+        </li>
+        <li className={location.pathname === '/dashboard/partners' ? 'active' : ''}>
+          <Link to="/dashboard/partners"><FaHandshake /> Partners Management</Link>
+        </li>
+        <li className={location.pathname === '/dashboard/settings' ? 'active' : ''}>
+          <Link to="/dashboard/settings"><FaCog /> Website Settings</Link>
+        </li>
       </ul>
       <div className="sidebar-footer">
-        <Link to="/" className="btn">Logout</Link>
+        <button onClick={handleLogout} className="logout-btn">
+          <FaSignOutAlt /> Logout
+        </button>
       </div>
     </div>
   );
