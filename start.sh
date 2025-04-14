@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Start MongoDB if it's not running (uncomment if needed)
-# mongod --dbpath=/data/db &
+# Start MongoDB if it's not running
+mongod --dbpath=/data/db &
+MONGO_PID=$!
+
+# Wait a bit for MongoDB to start
+sleep 3
 
 # Start the server in one terminal
 echo "Starting server..."
@@ -21,6 +25,7 @@ cleanup() {
   echo "Shutting down..."
   kill $SERVER_PID
   kill $CLIENT_PID
+  kill $MONGO_PID
   exit
 }
 

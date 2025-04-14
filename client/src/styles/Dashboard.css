@@ -335,15 +335,45 @@
 }
 
 .card p {
-  color: #FF8A00; /* Bright orange for notifications */
   font-size: 0.9rem;
   font-weight: 600;
   margin: 0;
   display: inline-flex;
   align-items: center;
-  background-color: rgba(255, 138, 0, 0.1); /* Light orange background */
   padding: 0.3rem 0.6rem;
   border-radius: 1rem;
+}
+
+.positive-change {
+  color: #10B981; /* Green for positive changes */
+  background-color: rgba(16, 185, 129, 0.1); /* Light green background */
+}
+
+.negative-change {
+  color: #EF4444; /* Red for negative changes */
+  background-color: rgba(239, 68, 68, 0.1); /* Light red background */
+}
+
+.card p.orange-notification {
+  color: #FF8A00 !important; /* Orange text color with !important */
+  background-color: rgba(255, 138, 0, 0.1) !important; /* Light orange background with !important */
+}
+
+/* Error notification */
+.error-notification {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-left: 4px solid #EF4444;
+}
+
+.error-notification svg {
+  font-size: 1.2rem;
 }
 
 /* Notification icon styling */
@@ -463,11 +493,11 @@
 }
 
 .visitors-color {
-  background-color: #8884d8;
+  background-color: #0066FF;
 }
 
 .content-color {
-  background-color: #82ca9d;
+  background-color: #60A5FA;
 }
 
 /* Quick Actions */

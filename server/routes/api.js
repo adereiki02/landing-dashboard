@@ -6,6 +6,7 @@ const newsRoutes = require('./newsRoutes');
 const partnerRoutes = require('./partnerRoutes');
 const portfolioRoutes = require('./portfolioRoutes');
 const settingRoutes = require('./settingRoutes');
+const dashboardRoutes = require('./dashboardRoutes');
 
 // User routes
 router.use('/users', userRoutes);
@@ -24,5 +25,8 @@ router.use('/portfolio', portfolioRoutes);
 
 // Settings routes
 router.use('/settings', settingRoutes);
+
+// Dashboard routes
+router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;

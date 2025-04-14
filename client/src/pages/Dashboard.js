@@ -3,16 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import '../styles/Dashboard.css';
-import { FaUsers, FaNewspaper, FaBriefcase, FaHandshake, FaChartLine } from 'react-icons/fa';
+import { FaUsers, FaNewspaper, FaBriefcase, FaHandshake, FaChartLine, FaExclamationTriangle } from 'react-icons/fa';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import axios from 'axios';
 
 function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Sample data for charts
-  const visitorData = [
+  // Default data for charts in case API fails
+  const defaultVisitorData = [
     { name: 'Jan', visitors: 4000 },
     { name: 'Feb', visitors: 3000 },
     { name: 'Mar', visitors: 5000 },
@@ -21,7 +24,7 @@ function Dashboard() {
     { name: 'Jun', visitors: 8000 },
   ];
 
-  const contentData = [
+  const defaultContentData = [
     { name: 'News', count: 24 },
     { name: 'Portfolio', count: 18 },
     { name: 'Partners', count: 12 },
@@ -37,16 +40,49 @@ function Dashboard() {
       // Check if user is admin or superadmin
       if (!parsedUser.role || (parsedUser.role !== 'admin' && parsedUser.role !== 'superadmin')) {
         navigate('/');
+        return;
       }
+
+      // Fetch dashboard data
+      const fetchDashboardData = async () => {
+        try {
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${parsedUser.token}`,
+            },
+          };
+
+          const { data } = await axios.get('/api/dashboard/stats', config);
+          setDashboardData(data);
+          setError(null);
+        } catch (error) {
+          console.error('Error fetching dashboard data:', error);
+          setError('Failed to load dashboard data. Please try again later.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchDashboardData();
     } else {
       navigate('/login');
     }
-    setLoading(false);
   }, [navigate]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
+
+  // Use data from API or fallback to defaults if not available
+  const visitorData = dashboardData?.charts?.visitorData || defaultVisitorData;
+  const contentData = dashboardData?.charts?.contentData || defaultContentData;
+  
+  // Stats data
+  const visitorStats = dashboardData?.stats?.visitors || { count: 24500, percentChange: 15, newThisMonth: 3675 };
+  const newsStats = dashboardData?.stats?.news || { count: 24, percentChange: 15, newThisMonth: 3 };
+  const portfolioStats = dashboardData?.stats?.portfolio || { count: 18, percentChange: 12, newThisMonth: 2 };
+  const partnerStats = dashboardData?.stats?.partners || { count: 12, percentChange: 9, newThisMonth: 1 };
 
   return (
     <div className="dashboard-container">
@@ -58,38 +94,52 @@ function Dashboard() {
           <p>Here's an overview of your website statistics</p>
         </div>
         
+        {error && (
+          <div className="error-notification">
+            <FaExclamationTriangle /> {error}
+          </div>
+        )}
+        
         <div className="dashboard-cards">
           <div className="card">
             <div className="card-inner">
               <h3>Total Visitors</h3>
               <FaUsers className="card-icon" />
             </div>
-            <h1>24,500</h1>
-            <p>+15% from last month</p>
+            <h1>{visitorStats.count.toLocaleString()}</h1>
+            <p className="orange-notification">
+              +{visitorStats.percentChange}% from last month
+            </p>
           </div>
           <div className="card">
             <div className="card-inner">
               <h3>News Articles</h3>
               <FaNewspaper className="card-icon" />
             </div>
-            <h1>24</h1>
-            <p>+3 new this month</p>
+            <h1>{newsStats.count}</h1>
+            <p className="orange-notification">
+              {newsStats.newThisMonth > 0 ? `+${newsStats.newThisMonth} new this month` : 'No new articles this month'}
+            </p>
           </div>
           <div className="card">
             <div className="card-inner">
               <h3>Portfolio Items</h3>
               <FaBriefcase className="card-icon" />
             </div>
-            <h1>18</h1>
-            <p>+2 new this month</p>
+            <h1>{portfolioStats.count}</h1>
+            <p className="orange-notification">
+              {portfolioStats.newThisMonth > 0 ? `+${portfolioStats.newThisMonth} new this month` : 'No new items this month'}
+            </p>
           </div>
           <div className="card">
             <div className="card-inner">
               <h3>Partners</h3>
               <FaHandshake className="card-icon" />
             </div>
-            <h1>12</h1>
-            <p>+1 new this month</p>
+            <h1>{partnerStats.count}</h1>
+            <p className="orange-notification">
+              {partnerStats.newThisMonth > 0 ? `+${partnerStats.newThisMonth} new this month` : 'No new partners this month'}
+            </p>
           </div>
         </div>
         
@@ -132,10 +182,10 @@ function Dashboard() {
                 <Line 
                   type="monotone" 
                   dataKey="visitors" 
-                  stroke="#8884d8" 
+                  stroke="#0066FF" 
                   strokeWidth={3}
-                  dot={{ stroke: '#8884d8', strokeWidth: 2, r: 4, fill: '#fff' }}
-                  activeDot={{ r: 8, stroke: '#8884d8', strokeWidth: 2, fill: '#fff' }} 
+                  dot={{ stroke: '#0066FF', strokeWidth: 2, r: 4, fill: '#fff' }}
+                  activeDot={{ r: 8, stroke: '#0066FF', strokeWidth: 2, fill: '#fff' }} 
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -145,7 +195,7 @@ function Dashboard() {
                 <span>Website Visitors</span>
               </div>
               <div className="legend-item">
-                <span>Total: 30,500 visitors</span>
+                <span>Total: {visitorStats.count.toLocaleString()} visitors</span>
               </div>
             </div>
           </div>
@@ -188,7 +238,7 @@ function Dashboard() {
                 />
                 <Bar 
                   dataKey="count" 
-                  fill="#82ca9d" 
+                  fill="#60A5FA" 
                   radius={[4, 4, 0, 0]}
                   barSize={40}
                   animationDuration={1500}
@@ -201,7 +251,7 @@ function Dashboard() {
                 <span>Content Items</span>
               </div>
               <div className="legend-item">
-                <span>Total: 54 items</span>
+                <span>Total: {newsStats.count + portfolioStats.count + partnerStats.count} items</span>
               </div>
             </div>
           </div>
