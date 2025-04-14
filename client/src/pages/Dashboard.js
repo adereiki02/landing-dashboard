@@ -4,7 +4,7 @@ import Sidebar from '../components/dashboard/Sidebar';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import '../styles/Dashboard.css';
 import { FaUsers, FaNewspaper, FaBriefcase, FaHandshake, FaChartLine, FaExclamationTriangle } from 'react-icons/fa';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import axios from 'axios';
 
 function Dashboard() {
@@ -257,16 +257,7 @@ function Dashboard() {
           </div>
         </div>
         
-        <div className="dashboard-quick-actions">
-          <h3>Quick Actions</h3>
-          <div className="quick-actions-buttons">
-            <Link to="/dashboard/news" className="quick-action-btn">Manage News</Link>
-            <Link to="/dashboard/portfolio" className="quick-action-btn">Manage Portfolio</Link>
-            <Link to="/dashboard/partners" className="quick-action-btn">Manage Partners</Link>
-            <Link to="/dashboard/settings" className="quick-action-btn">Website Settings</Link>
-          </div>
-        </div>
-        
+
         <div className="back-to-home">
           <Link to="/">← Back to Home</Link>
         </div>
