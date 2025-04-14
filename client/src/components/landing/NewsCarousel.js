@@ -1,54 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
+import axios from 'axios';
 
 function NewsCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [newsItems, setNewsItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  // Data dummy berita
-  const newsItems = [
-    {
-      id: 1,
-      title: "Peluncuran Website Baru BPBD Jawa Tengah",
-      date: "15 Juni 2023",
-      excerpt: "reikidevs berhasil meluncurkan website baru untuk Badan Penanggulangan Bencana Daerah (BPBD) Jawa Tengah dengan fitur pelaporan bencana real-time.",
-      image: "https://images.unsplash.com/photo-1593642532400-2682810df593?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Proyek Terbaru"
-    },
-    {
-      id: 2,
-      title: "Aplikasi Antrian Digital untuk Rumah Sakit",
-      date: "3 Mei 2023",
-      excerpt: "Sistem antrian digital yang dikembangkan oleh reikidevs kini telah diimplementasikan di 5 rumah sakit besar di Indonesia.",
-      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Inovasi"
-    },
-    {
-      id: 3,
-      title: "reikidevs Raih Penghargaan Top Digital Agency 2023",
-      date: "20 April 2023",
-      excerpt: "reikidevs berhasil meraih penghargaan sebagai Top Digital Agency 2023 dalam ajang Indonesia Digital Awards.",
-      image: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Penghargaan"
-    },
-    {
-      id: 4,
-      title: "Workshop Digital Marketing untuk UKM",
-      date: "10 Maret 2023",
-      excerpt: "reikidevs mengadakan workshop digital marketing gratis untuk membantu UKM meningkatkan presence online mereka.",
-      image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Event"
-    }
-  ];
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get('/api/news?limit=4&status=published');
+        setNewsItems(response.data.news);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setError('Failed to load news');
+        setLoading(false);
+      }
+    };
+    
+    fetchNews();
+  }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex(prevIndex => 
-        prevIndex === newsItems.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 6000);
-    
-    return () => clearInterval(interval);
+    if (newsItems.length > 0) {
+      const interval = setInterval(() => {
+        setActiveIndex(prevIndex => 
+          prevIndex === newsItems.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 6000);
+      
+      return () => clearInterval(interval);
+    }
   }, [newsItems.length]);
 
   const goToSlide = (index) => {
@@ -66,6 +52,45 @@ function NewsCarousel() {
       prevIndex === newsItems.length - 1 ? 0 : prevIndex + 1
     );
   };
+
+  if (loading) {
+    return (
+      <section id="news" className="news-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Berita Terbaru</h2>
+            <p>Memuat berita...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="news" className="news-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Berita Terbaru</h2>
+            <p>{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (newsItems.length === 0) {
+    return (
+      <section id="news" className="news-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Berita Terbaru</h2>
+            <p>Belum ada berita yang tersedia</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="news" className="news-section">
@@ -86,16 +111,22 @@ function NewsCarousel() {
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
               {newsItems.map((news) => (
-                <div className="news-card" key={news.id}>
+                <div className="news-card" key={news._id}>
                   <div className="news-image">
-                    <img src={news.image} alt={news.title} />
+                    <img src={news.featuredImage} alt={news.title} />
                     <div className="news-category">{news.category}</div>
                   </div>
                   <div className="news-content">
-                    <div className="news-date">{news.date}</div>
+                    <div className="news-date">
+                      {new Date(news.createdAt).toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </div>
                     <h3>{news.title}</h3>
                     <p>{news.excerpt}</p>
-                    <Link to={`/berita/${news.id}`} className="read-more">
+                    <Link to={`/berita/${news.slug}`} className="read-more">
                       Baca Selengkapnya
                     </Link>
                   </div>

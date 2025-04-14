@@ -1,6 +1,36 @@
-# Getting Started with Create React App
+# MERN Stack Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Fixing Proxy Error
+
+If you're experiencing proxy errors like `Could not proxy request /images/avatar.png from localhost:3000 to http://localhost:5000/`, follow these steps:
+
+1. Make sure MongoDB is running on your system
+2. Place an actual avatar.png file in the server/uploads/images/ directory
+3. Start both the server and client applications
+
+## Starting the Application
+
+You can start both the server and client using the following command:
+
+```bash
+# Make the script executable first (only needed once)
+chmod +x start.sh
+
+# Then run it
+./start.sh
+```
+
+Or you can start them manually:
+
+```bash
+# Terminal 1 - Start the server
+cd server
+npm run dev
+
+# Terminal 2 - Start the client
+cd client
+npm start
+```
 
 ## Available Scripts
 

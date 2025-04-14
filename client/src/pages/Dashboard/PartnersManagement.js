@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaArrowUp, FaArrowDown, FaLink } from 'react-icons/fa';
@@ -10,16 +11,10 @@ function PartnersManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [statusFilter, setStatusFilter] = useState('all');
   const navigate = useNavigate();
-
-  // Sample partners data
-  const samplePartners = [
-    { id: 1, name: 'Microsoft', category: 'Technology', website: 'https://microsoft.com', order: 1, active: true },
-    { id: 2, name: 'Amazon Web Services', category: 'Cloud Services', website: 'https://aws.amazon.com', order: 2, active: true },
-    { id: 3, name: 'Google Cloud', category: 'Cloud Services', website: 'https://cloud.google.com', order: 3, active: true },
-    { id: 4, name: 'IBM', category: 'Technology', website: 'https://ibm.com', order: 4, active: false },
-    { id: 5, name: 'Oracle', category: 'Database', website: 'https://oracle.com', order: 5, active: true },
-  ];
 
   useEffect(() => {
     // Get user info from localStorage
@@ -31,58 +26,99 @@ function PartnersManagement() {
       // Check if user is admin or superadmin
       if (!parsedUser.role || (parsedUser.role !== 'admin' && parsedUser.role !== 'superadmin')) {
         navigate('/');
+      } else {
+        // Fetch partners data
+        fetchPartners();
       }
     } else {
       navigate('/login');
     }
-    
-    // Simulate API call to fetch partners
-    setTimeout(() => {
-      setPartners(samplePartners);
+  }, [navigate, currentPage, statusFilter]);
+
+  const fetchPartners = async () => {
+    try {
+      setLoading(true);
+      let url = `/api/partners?page=${currentPage}`;
+      
+      if (statusFilter !== 'all') {
+        url += `&isActive=${statusFilter === 'active'}`;
+      }
+      
+      const response = await axios.get(url);
+      setPartners(response.data.partners);
+      setTotalPages(response.data.totalPages);
       setLoading(false);
-    }, 1000);
-  }, [navigate]);
+    } catch (error) {
+      console.error('Error fetching partners:', error);
+      setLoading(false);
+    }
+  };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this partner?')) {
-      // Filter out the deleted partner
-      setPartners(partners.filter(item => item.id !== id));
+      try {
+        await axios.delete(`/api/partners/${id}`);
+        // Refresh partners list
+        fetchPartners();
+      } catch (error) {
+        console.error('Error deleting partner:', error);
+        alert('Failed to delete partner');
+      }
     }
   };
 
-  const toggleActive = (id) => {
-    setPartners(partners.map(item => 
-      item.id === id ? { ...item, active: !item.active } : item
-    ));
-  };
-
-  const moveUp = (id) => {
-    const index = partners.findIndex(p => p.id === id);
-    if (index > 0) {
-      const newPartners = [...partners];
-      const temp = newPartners[index].order;
-      newPartners[index].order = newPartners[index - 1].order;
-      newPartners[index - 1].order = temp;
-      newPartners.sort((a, b) => a.order - b.order);
-      setPartners(newPartners);
+  const toggleActive = async (id, currentStatus) => {
+    try {
+      await axios.put(`/api/partners/${id}`, { isActive: !currentStatus });
+      // Refresh partners list
+      fetchPartners();
+    } catch (error) {
+      console.error('Error updating partner status:', error);
+      alert('Failed to update partner status');
     }
   };
 
-  const moveDown = (id) => {
-    const index = partners.findIndex(p => p.id === id);
-    if (index < partners.length - 1) {
-      const newPartners = [...partners];
-      const temp = newPartners[index].order;
-      newPartners[index].order = newPartners[index + 1].order;
-      newPartners[index + 1].order = temp;
-      newPartners.sort((a, b) => a.order - b.order);
-      setPartners(newPartners);
+  const moveUp = async (id) => {
+    try {
+      await axios.put(`/api/partners/order`, { id, direction: 'up' });
+      // Refresh partners list
+      fetchPartners();
+    } catch (error) {
+      console.error('Error moving partner up:', error);
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.message);
+      } else {
+        alert('Failed to update partner order');
+      }
     }
+  };
+
+  const moveDown = async (id) => {
+    try {
+      await axios.put(`/api/partners/order`, { id, direction: 'down' });
+      // Refresh partners list
+      fetchPartners();
+    } catch (error) {
+      console.error('Error moving partner down:', error);
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.message);
+      } else {
+        alert('Failed to update partner order');
+      }
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   const filteredPartners = partners.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -107,18 +143,16 @@ function PartnersManagement() {
             <FaSearch />
             <input 
               type="text" 
-              placeholder="Search by name or category..." 
+              placeholder="Search by name..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <select className="filter-select">
-            <option value="all">All Categories</option>
-            <option value="technology">Technology</option>
-            <option value="cloud-services">Cloud Services</option>
-            <option value="database">Database</option>
-          </select>
-          <select className="filter-select">
+          <select 
+            className="filter-select"
+            value={statusFilter}
+            onChange={handleStatusFilterChange}
+          >
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -132,7 +166,6 @@ function PartnersManagement() {
                 <th>Order</th>
                 <th>Logo</th>
                 <th>Name</th>
-                <th>Category</th>
                 <th>Website</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -141,11 +174,11 @@ function PartnersManagement() {
             <tbody>
               {filteredPartners.length > 0 ? (
                 filteredPartners.map((item, index) => (
-                  <tr key={item.id}>
+                  <tr key={item._id}>
                     <td className="order-column">
                       <div className="order-buttons">
                         <button 
-                          onClick={() => moveUp(item.id)} 
+                          onClick={() => moveUp(item._id)} 
                           disabled={index === 0}
                           className="order-btn"
                         >
@@ -153,7 +186,7 @@ function PartnersManagement() {
                         </button>
                         <span>{item.order}</span>
                         <button 
-                          onClick={() => moveDown(item.id)} 
+                          onClick={() => moveDown(item._id)} 
                           disabled={index === partners.length - 1}
                           className="order-btn"
                         >
@@ -163,31 +196,32 @@ function PartnersManagement() {
                     </td>
                     <td>
                       <img 
-                        src={`/images/partners/${item.id}.png`} 
+                        src={item.logo} 
                         alt={item.name} 
                         className="partner-logo"
                       />
                     </td>
                     <td>{item.name}</td>
-                    <td>{item.category}</td>
                     <td>
-                      <a href={item.website} target="_blank" rel="noopener noreferrer" className="website-link">
-                        <FaLink /> {item.website}
-                      </a>
+                      {item.websiteUrl && (
+                        <a href={item.websiteUrl} target="_blank" rel="noopener noreferrer" className="website-link">
+                          <FaLink /> {item.websiteUrl}
+                        </a>
+                      )}
                     </td>
                     <td>
                       <button 
-                        onClick={() => toggleActive(item.id)} 
-                        className={`status-toggle ${item.active ? 'active' : 'inactive'}`}
+                        onClick={() => toggleActive(item._id, item.isActive)} 
+                        className={`status-toggle ${item.isActive ? 'active' : 'inactive'}`}
                       >
-                        {item.active ? 'Active' : 'Inactive'}
+                        {item.isActive ? 'Active' : 'Inactive'}
                       </button>
                     </td>
                     <td className="actions">
-                      <Link to={`/dashboard/partners/edit/${item.id}`} className="btn-edit">
+                      <Link to={`/dashboard/partners/edit/${item._id}`} className="btn-edit">
                         <FaEdit /> Edit
                       </Link>
-                      <button onClick={() => handleDelete(item.id)} className="btn-delete">
+                      <button onClick={() => handleDelete(item._id)} className="btn-delete">
                         <FaTrash /> Delete
                       </button>
                     </td>
@@ -195,11 +229,39 @@ function PartnersManagement() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="no-data">No partners found</td>
+                  <td colSpan="6" className="no-data">No partners found</td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+        
+        <div className="pagination">
+          <button 
+            className="pagination-btn" 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <div className="pagination-numbers">
+            {[...Array(totalPages).keys()].map(number => (
+              <button 
+                key={number + 1}
+                className={`pagination-number ${currentPage === number + 1 ? 'active' : ''}`}
+                onClick={() => handlePageChange(number + 1)}
+              >
+                {number + 1}
+              </button>
+            ))}
+          </div>
+          <button 
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

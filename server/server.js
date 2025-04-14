@@ -19,6 +19,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(__dirname + '/uploads'));
+
+// Serve static images
+app.use('/images', express.static(__dirname + '/uploads/images'));
+
 // Import routes
 const apiRoutes = require('./routes/api');
 

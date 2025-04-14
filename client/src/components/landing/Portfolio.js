@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
-import megaDigital from '../../assets/mega-digital.png';
-import bpbdJateng from '../../assets/bpbd-jateng.png';
-import psai from '../../assets/psai.png';
-import customerQueue from '../../assets/customer-queue.png';
+import axios from 'axios';
 import '../../styles/Portfolio.css';
 
 function Portfolio() {
   const [isMobile, setIsMobile] = useState(false);
+  const [portfolioItems, setPortfolioItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Fetch portfolio items from API
+    const fetchPortfolio = async () => {
+      try {
+        const response = await axios.get('/api/portfolio?limit=4&status=published');
+        setPortfolioItems(response.data.portfolioItems);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching portfolio:', err);
+        setError('Failed to load portfolio');
+        setLoading(false);
+      }
+    };
+    
+    fetchPortfolio();
+
     // Check if we're on mobile
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 992);
@@ -26,49 +41,17 @@ function Portfolio() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Portfolio items data
-  const portfolioItems = [
-    {
-      id: 1,
-      title: "Mega Digital",
-      description: "Retail Electronics Business",
-      image: megaDigital,
-      alt: "Mega Digital - Retail Electronics Business Website"
-    },
-    {
-      id: 2,
-      title: "BPBD Jawa Tengah",
-      description: "Government Agency",
-      image: bpbdJateng,
-      alt: "BPBD Jawa Tengah - Government Agency Website"
-    },
-    {
-      id: 3,
-      title: "PSAI",
-      description: "Sports Organization",
-      image: psai,
-      alt: "PSAI - Sports Organization Website"
-    },
-    {
-      id: 4,
-      title: "Queue System",
-      description: "Digital Service",
-      image: customerQueue,
-      alt: "Customer Queue System - Digital Service Application"
-    }
-  ];
-
   // Mobile portfolio component
   const MobilePortfolio = () => (
     <div className="portfolio-grid">
       {portfolioItems.map(item => (
-        <div className="portfolio-item" key={item.id}>
+        <div className="portfolio-item" key={item._id}>
           <div className="portfolio-image">
-            <img src={item.image} alt={item.alt} loading="lazy" />
+            <img src={item.featuredImage} alt={item.title} loading="lazy" />
           </div>
           <div className="portfolio-content">
             <h3>{item.title}</h3>
-            <p>{item.description}</p>
+            <p>{item.projectType}</p>
           </div>
         </div>
       ))}
@@ -81,19 +64,58 @@ function Portfolio() {
       {portfolioItems.map((item) => (
         <div 
           className="portfolio-item" 
-          key={item.id}
+          key={item._id}
         >
           <div className="portfolio-image">
-            <img src={item.image} alt={item.alt} loading="lazy" />
+            <img src={item.featuredImage} alt={item.title} loading="lazy" />
           </div>
           <div className="portfolio-content">
             <h3>{item.title}</h3>
-            <p>{item.description}</p>
+            <p>{item.projectType}</p>
           </div>
         </div>
       ))}
     </div>
   );
+
+  if (loading) {
+    return (
+      <section id="portfolio" className="portfolio-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Portofolio Kami</h2>
+            <p>Memuat portofolio...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="portfolio" className="portfolio-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Portofolio Kami</h2>
+            <p>{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (portfolioItems.length === 0) {
+    return (
+      <section id="portfolio" className="portfolio-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Portofolio Kami</h2>
+            <p>Belum ada portofolio yang tersedia</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="portfolio" className="portfolio-section">

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
-import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaEye } from 'react-icons/fa';
 import '../../styles/Dashboard.css';
 
 function NewsManagement() {
@@ -10,16 +11,12 @@ function NewsManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
-
-  // Sample news data
-  const sampleNews = [
-    { id: 1, title: 'New Website Launch', category: 'Company', date: '2023-06-15', status: 'Published', views: 1250 },
-    { id: 2, title: 'Tech Conference 2023', category: 'Events', date: '2023-07-22', status: 'Published', views: 980 },
-    { id: 3, title: 'Partnership with Microsoft', category: 'Business', date: '2023-08-05', status: 'Published', views: 2100 },
-    { id: 4, title: 'New Office Opening', category: 'Company', date: '2023-09-10', status: 'Draft', views: 0 },
-    { id: 5, title: 'Developer Meetup', category: 'Events', date: '2023-10-18', status: 'Published', views: 750 },
-  ];
 
   useEffect(() => {
     // Get user info from localStorage
@@ -31,23 +28,74 @@ function NewsManagement() {
       // Check if user is admin or superadmin
       if (!parsedUser.role || (parsedUser.role !== 'admin' && parsedUser.role !== 'superadmin')) {
         navigate('/');
+      } else {
+        // Fetch news data
+        fetchNews();
+        // Fetch categories
+        fetchCategories();
       }
     } else {
       navigate('/login');
     }
-    
-    // Simulate API call to fetch news
-    setTimeout(() => {
-      setNews(sampleNews);
-      setLoading(false);
-    }, 1000);
-  }, [navigate]);
+  }, [navigate, currentPage, categoryFilter, statusFilter]);
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this news article?')) {
-      // Filter out the deleted news
-      setNews(news.filter(item => item.id !== id));
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      let url = `/api/news?page=${currentPage}`;
+      
+      if (categoryFilter !== 'all') {
+        url += `&category=${categoryFilter}`;
+      }
+      
+      if (statusFilter !== 'all') {
+        url += `&status=${statusFilter}`;
+      }
+      
+      const response = await axios.get(url);
+      setNews(response.data.news);
+      setTotalPages(response.data.totalPages);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      setLoading(false);
     }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('/api/news/categories');
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this news article?')) {
+      try {
+        await axios.delete(`/api/news/${id}`);
+        // Refresh news list
+        fetchNews();
+      } catch (error) {
+        console.error('Error deleting news:', error);
+        alert('Failed to delete news article');
+      }
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleCategoryFilterChange = (e) => {
+    setCategoryFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   const filteredNews = news.filter(item =>
@@ -82,13 +130,21 @@ function NewsManagement() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <select className="filter-select">
+          <select 
+            className="filter-select" 
+            value={categoryFilter}
+            onChange={handleCategoryFilterChange}
+          >
             <option value="all">All Categories</option>
-            <option value="company">Company</option>
-            <option value="events">Events</option>
-            <option value="business">Business</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>{category}</option>
+            ))}
           </select>
-          <select className="filter-select">
+          <select 
+            className="filter-select"
+            value={statusFilter}
+            onChange={handleStatusFilterChange}
+          >
             <option value="all">All Status</option>
             <option value="published">Published</option>
             <option value="draft">Draft</option>
@@ -110,21 +166,24 @@ function NewsManagement() {
             <tbody>
               {filteredNews.length > 0 ? (
                 filteredNews.map(item => (
-                  <tr key={item.id}>
+                  <tr key={item._id}>
                     <td>{item.title}</td>
                     <td>{item.category}</td>
-                    <td>{item.date}</td>
+                    <td>{new Date(item.createdAt).toLocaleDateString()}</td>
                     <td>
                       <span className={`status-badge ${item.status.toLowerCase()}`}>
-                        {item.status}
+                        {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                       </span>
                     </td>
-                    <td>{item.views}</td>
+                    <td>{item.viewCount}</td>
                     <td className="actions">
-                      <Link to={`/dashboard/news/edit/${item.id}`} className="btn-edit">
+                      <Link to={`/berita/${item.slug}`} className="btn-view" target="_blank">
+                        <FaEye /> View
+                      </Link>
+                      <Link to={`/dashboard/news/edit/${item._id}`} className="btn-edit">
                         <FaEdit /> Edit
                       </Link>
-                      <button onClick={() => handleDelete(item.id)} className="btn-delete">
+                      <button onClick={() => handleDelete(item._id)} className="btn-delete">
                         <FaTrash /> Delete
                       </button>
                     </td>
@@ -140,13 +199,31 @@ function NewsManagement() {
         </div>
         
         <div className="pagination">
-          <button className="pagination-btn">Previous</button>
+          <button 
+            className="pagination-btn" 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
           <div className="pagination-numbers">
-            <button className="pagination-number active">1</button>
-            <button className="pagination-number">2</button>
-            <button className="pagination-number">3</button>
+            {[...Array(totalPages).keys()].map(number => (
+              <button 
+                key={number + 1}
+                className={`pagination-number ${currentPage === number + 1 ? 'active' : ''}`}
+                onClick={() => handlePageChange(number + 1)}
+              >
+                {number + 1}
+              </button>
+            ))}
           </div>
-          <button className="pagination-btn">Next</button>
+          <button 
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

@@ -1,15 +1,12 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Protect routes - verify token
-const protect = async (req, res, next) => {
+// Protect routes
+exports.protect = async (req, res, next) => {
   let token;
 
   // Check if token exists in headers
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
@@ -17,7 +14,7 @@ const protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token
+      // Get user from token
       req.user = await User.findById(decoded.id).select('-password');
 
       next();
@@ -33,7 +30,7 @@ const protect = async (req, res, next) => {
 };
 
 // Admin middleware
-const admin = (req, res, next) => {
+exports.admin = (req, res, next) => {
   if (req.user && (req.user.role === 'admin' || req.user.role === 'superadmin')) {
     next();
   } else {
@@ -41,13 +38,11 @@ const admin = (req, res, next) => {
   }
 };
 
-// Superadmin middleware
-const superadmin = (req, res, next) => {
+// Super admin middleware
+exports.superAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'superadmin') {
     next();
   } else {
-    res.status(401).json({ message: 'Not authorized as a superadmin' });
+    res.status(401).json({ message: 'Not authorized as a super admin' });
   }
 };
-
-module.exports = { protect, admin, superadmin };

@@ -6,7 +6,7 @@
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
-  background-color: #2c3e50;
+  background-color: #1a2b47; /* Darker blue based on ReikiDevs brand */
   color: white;
   padding: 1rem;
   display: flex;
@@ -18,6 +18,11 @@
   padding: 1rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 1rem;
+}
+
+.sidebar-header h3 {
+  color: #4ecdc4; /* Teal accent color */
+  margin: 0;
 }
 
 .sidebar-user {
@@ -32,7 +37,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #3498db;
+  background-color: #4ecdc4; /* Teal accent color */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,15 +79,16 @@
 
 .sidebar-menu li a svg {
   margin-right: 0.75rem;
+  color: #4ecdc4; /* Teal accent color */
 }
 
 .sidebar-menu li.active a {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(78, 205, 196, 0.2); /* Teal with opacity */
   font-weight: bold;
 }
 
 .sidebar-menu li a:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(78, 205, 196, 0.1); /* Teal with opacity */
 }
 
 .sidebar-footer {
@@ -93,7 +99,7 @@
 .logout-btn {
   width: 100%;
   padding: 0.75rem;
-  background-color: rgba(231, 76, 60, 0.8);
+  background-color: rgba(255, 76, 76, 0.8); /* Red color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -109,14 +115,14 @@
 }
 
 .logout-btn:hover {
-  background-color: #c0392b;
+  background-color: #ff4c4c; /* Brighter red */
 }
 
 /* Main Content Styles */
 .main-content {
   flex: 1;
   padding: 1rem 2rem;
-  background-color: #f0f2f5;
+  background-color: #f5f7fa; /* Light gray background */
   overflow-y: auto;
 }
 
@@ -168,7 +174,7 @@
 
 .dashboard-welcome h2 {
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
 }
 
 .dashboard-welcome p {
@@ -189,6 +195,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 3px solid #4ecdc4; /* Teal accent border */
 }
 
 .card:hover {
@@ -205,17 +212,17 @@
 
 .card-icon {
   font-size: 1.5rem;
-  color: #3498db;
+  color: #4ecdc4; /* Teal accent color */
 }
 
 .card h1 {
   font-size: 1.8rem;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
   margin: 0.5rem 0;
 }
 
 .card p {
-  color: #27ae60;
+  color: #4ecdc4; /* Teal accent color */
   font-size: 0.9rem;
   margin: 0;
 }
@@ -233,19 +240,20 @@
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-left: 3px solid #4ecdc4; /* Teal accent border */
 }
 
 .chart-container h3 {
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
   display: flex;
   align-items: center;
 }
 
 .chart-container h3 svg {
   margin-right: 0.5rem;
-  color: #3498db;
+  color: #4ecdc4; /* Teal accent color */
 }
 
 /* Quick Actions */
@@ -255,12 +263,13 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
+  border-bottom: 3px solid #4ecdc4; /* Teal accent border */
 }
 
 .dashboard-quick-actions h3 {
   margin-top: 0;
   margin-bottom: 1rem;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
 }
 
 .quick-actions-buttons {
@@ -271,7 +280,7 @@
 
 .quick-action-btn {
   padding: 0.75rem 1.5rem;
-  background-color: #3498db;
+  background-color: #4ecdc4; /* Teal accent color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -281,7 +290,7 @@
 }
 
 .quick-action-btn:hover {
-  background-color: #2980b9;
+  background-color: #3dbeb6; /* Darker teal */
 }
 
 /* Content Header */
@@ -294,12 +303,12 @@
 
 .content-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
 }
 
 .btn-primary {
   padding: 0.75rem 1.5rem;
-  background-color: #3498db;
+  background-color: #4ecdc4; /* Teal accent color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -314,7 +323,7 @@
 }
 
 .btn-primary:hover {
-  background-color: #2980b9;
+  background-color: #3dbeb6; /* Darker teal */
 }
 
 /* Search and Filter */
@@ -372,14 +381,14 @@
   padding: 1rem;
   text-align: left;
   font-weight: 600;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
   border-bottom: 1px solid #e0e0e0;
 }
 
 .data-table td {
   padding: 1rem;
   border-bottom: 1px solid #e0e0e0;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
 }
 
 .data-table tr:last-child td {
@@ -403,7 +412,7 @@
 }
 
 .status-badge.draft {
-  background-color: #fffde7;
+  background-color: #fff8e1;
   color: #f57f17;
 }
 
@@ -422,14 +431,14 @@
 }
 
 .btn-edit {
-  background-color: #f1f8fe;
-  color: #3498db;
-  border: 1px solid #d1e6fa;
+  background-color: #e3f9f7; /* Light teal */
+  color: #4ecdc4; /* Teal accent color */
+  border: 1px solid #c5f1ed;
 }
 
 .btn-delete {
   background-color: #feecec;
-  color: #e74c3c;
+  color: #ff4c4c; /* Red color */
   border: 1px solid #fad7d7;
   cursor: pointer;
 }
@@ -479,9 +488,9 @@
 }
 
 .pagination-number.active {
-  background-color: #3498db;
+  background-color: #4ecdc4; /* Teal accent color */
   color: white;
-  border-color: #3498db;
+  border-color: #4ecdc4; /* Teal accent color */
 }
 
 /* Portfolio Grid */
@@ -497,6 +506,12 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .portfolio-image {
@@ -520,7 +535,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #f39c12;
+  background-color: #4ecdc4; /* Teal accent color */
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 50px;
@@ -535,7 +550,7 @@
 .portfolio-details h3 {
   margin-top: 0;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
 }
 
 .portfolio-details p {
@@ -564,9 +579,9 @@
 }
 
 .btn-feature.featured {
-  background-color: #fff8e1;
-  color: #f39c12;
-  border-color: #ffe082;
+  background-color: #e3f9f7; /* Light teal */
+  color: #4ecdc4; /* Teal accent color */
+  border-color: #c5f1ed;
 }
 
 .action-buttons {
@@ -607,7 +622,7 @@
 .website-link {
   display: flex;
   align-items: center;
-  color: #3498db;
+  color: #4ecdc4; /* Teal accent color */
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -632,7 +647,7 @@
 
 .status-toggle.inactive {
   background-color: #feecec;
-  color: #e74c3c;
+  color: #ff4c4c; /* Red color */
 }
 
 /* Settings Form */
@@ -651,14 +666,14 @@
 .settings-section h3 {
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
   display: flex;
   align-items: center;
 }
 
 .settings-section h3 svg {
   margin-right: 0.5rem;
-  color: #3498db;
+  color: #4ecdc4; /* Teal accent color */
 }
 
 .form-group {
@@ -670,7 +685,7 @@
   align-items: center;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
 }
 
 .form-group label svg {
@@ -743,7 +758,7 @@
 .btn-upload {
   padding: 0.5rem 1rem;
   background-color: #f8f9fa;
-  color: #2c3e50;
+  color: #1a2b47; /* Dark blue from brand */
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -772,7 +787,7 @@
 
 .btn-save {
   padding: 0.75rem 1.5rem;
-  background-color: #3498db;
+  background-color: #4ecdc4; /* Teal accent color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -787,7 +802,7 @@
 }
 
 .btn-save:hover {
-  background-color: #2980b9;
+  background-color: #3dbeb6; /* Darker teal */
 }
 
 .btn-save:disabled {
@@ -809,7 +824,7 @@
   align-items: center;
   height: 100vh;
   font-size: 1.2rem;
-  color: #3498db;
+  color: #4ecdc4; /* Teal accent color */
 }
 
 /* Back to Home Link */
@@ -818,7 +833,7 @@
 }
 
 .back-to-home a {
-  color: #3498db;
+  color: #4ecdc4; /* Teal accent color */
   text-decoration: none;
   display: inline-flex;
   align-items: center;

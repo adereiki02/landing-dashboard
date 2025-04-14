@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaEye } from 'react-icons/fa';
@@ -10,16 +11,12 @@ function PortfolioManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [projectTypeFilter, setProjectTypeFilter] = useState('all');
+  const [featuredFilter, setFeaturedFilter] = useState('all');
+  const [projectTypes, setProjectTypes] = useState([]);
   const navigate = useNavigate();
-
-  // Sample portfolio data
-  const samplePortfolios = [
-    { id: 1, title: 'E-Commerce Platform', category: 'Web Development', client: 'ABC Corp', date: '2023-05-10', featured: true },
-    { id: 2, title: 'Mobile Banking App', category: 'Mobile App', client: 'XYZ Bank', date: '2023-06-22', featured: true },
-    { id: 3, title: 'Corporate Website Redesign', category: 'Web Design', client: 'Global Industries', date: '2023-07-15', featured: false },
-    { id: 4, title: 'Inventory Management System', category: 'Software', client: 'Retail Solutions', date: '2023-08-05', featured: false },
-    { id: 5, title: 'Healthcare Patient Portal', category: 'Web Application', client: 'City Hospital', date: '2023-09-18', featured: true },
-  ];
 
   useEffect(() => {
     // Get user info from localStorage
@@ -31,34 +28,90 @@ function PortfolioManagement() {
       // Check if user is admin or superadmin
       if (!parsedUser.role || (parsedUser.role !== 'admin' && parsedUser.role !== 'superadmin')) {
         navigate('/');
+      } else {
+        // Fetch portfolio data
+        fetchPortfolios();
+        // Fetch project types
+        fetchProjectTypes();
       }
     } else {
       navigate('/login');
     }
-    
-    // Simulate API call to fetch portfolios
-    setTimeout(() => {
-      setPortfolios(samplePortfolios);
-      setLoading(false);
-    }, 1000);
-  }, [navigate]);
+  }, [navigate, currentPage, projectTypeFilter, featuredFilter]);
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this portfolio item?')) {
-      // Filter out the deleted portfolio
-      setPortfolios(portfolios.filter(item => item.id !== id));
+  const fetchPortfolios = async () => {
+    try {
+      setLoading(true);
+      let url = `/api/portfolio?page=${currentPage}`;
+      
+      if (projectTypeFilter !== 'all') {
+        url += `&projectType=${projectTypeFilter}`;
+      }
+      
+      if (featuredFilter !== 'all') {
+        url += `&isFeatured=${featuredFilter === 'featured'}`;
+      }
+      
+      const response = await axios.get(url);
+      setPortfolios(response.data.portfolioItems);
+      setTotalPages(response.data.totalPages);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching portfolios:', error);
+      setLoading(false);
     }
   };
 
-  const toggleFeatured = (id) => {
-    setPortfolios(portfolios.map(item => 
-      item.id === id ? { ...item, featured: !item.featured } : item
-    ));
+  const fetchProjectTypes = async () => {
+    try {
+      const response = await axios.get('/api/portfolio/project-types');
+      setProjectTypes(response.data);
+    } catch (error) {
+      console.error('Error fetching project types:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this portfolio item?')) {
+      try {
+        await axios.delete(`/api/portfolio/${id}`);
+        // Refresh portfolio list
+        fetchPortfolios();
+      } catch (error) {
+        console.error('Error deleting portfolio:', error);
+        alert('Failed to delete portfolio item');
+      }
+    }
+  };
+
+  const toggleFeatured = async (id, currentStatus) => {
+    try {
+      await axios.put(`/api/portfolio/${id}`, { isFeatured: !currentStatus });
+      // Refresh portfolio list
+      fetchPortfolios();
+    } catch (error) {
+      console.error('Error updating featured status:', error);
+      alert('Failed to update featured status');
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleProjectTypeFilterChange = (e) => {
+    setProjectTypeFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const handleFeaturedFilterChange = (e) => {
+    setFeaturedFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   const filteredPortfolios = portfolios.filter(item =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.projectType.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.client.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -89,14 +142,21 @@ function PortfolioManagement() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <select className="filter-select">
-            <option value="all">All Categories</option>
-            <option value="web-development">Web Development</option>
-            <option value="mobile-app">Mobile App</option>
-            <option value="web-design">Web Design</option>
-            <option value="software">Software</option>
+          <select 
+            className="filter-select"
+            value={projectTypeFilter}
+            onChange={handleProjectTypeFilterChange}
+          >
+            <option value="all">All Project Types</option>
+            {projectTypes.map((type, index) => (
+              <option key={index} value={type}>{type}</option>
+            ))}
           </select>
-          <select className="filter-select">
+          <select 
+            className="filter-select"
+            value={featuredFilter}
+            onChange={handleFeaturedFilterChange}
+          >
             <option value="all">All Status</option>
             <option value="featured">Featured</option>
             <option value="not-featured">Not Featured</option>
@@ -106,32 +166,32 @@ function PortfolioManagement() {
         <div className="portfolio-grid">
           {filteredPortfolios.length > 0 ? (
             filteredPortfolios.map(item => (
-              <div key={item.id} className="portfolio-card">
+              <div key={item._id} className="portfolio-card">
                 <div className="portfolio-image">
-                  <img src={`/images/portfolio-${item.id}.jpg`} alt={item.title} />
-                  {item.featured && <span className="featured-badge">Featured</span>}
+                  <img src={item.featuredImage} alt={item.title} />
+                  {item.isFeatured && <span className="featured-badge">Featured</span>}
                 </div>
                 <div className="portfolio-details">
                   <h3>{item.title}</h3>
-                  <p><strong>Category:</strong> {item.category}</p>
+                  <p><strong>Category:</strong> {item.projectType}</p>
                   <p><strong>Client:</strong> {item.client}</p>
-                  <p><strong>Date:</strong> {item.date}</p>
+                  <p><strong>Date:</strong> {new Date(item.completionDate || item.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="portfolio-actions">
                   <button 
-                    onClick={() => toggleFeatured(item.id)} 
-                    className={`btn-feature ${item.featured ? 'featured' : ''}`}
+                    onClick={() => toggleFeatured(item._id, item.isFeatured)} 
+                    className={`btn-feature ${item.isFeatured ? 'featured' : ''}`}
                   >
-                    {item.featured ? 'Remove Featured' : 'Set as Featured'}
+                    {item.isFeatured ? 'Remove Featured' : 'Set as Featured'}
                   </button>
                   <div className="action-buttons">
-                    <Link to={`/dashboard/portfolio/edit/${item.id}`} className="btn-edit">
+                    <Link to={`/dashboard/portfolio/edit/${item._id}`} className="btn-edit">
                       <FaEdit /> Edit
                     </Link>
-                    <button onClick={() => handleDelete(item.id)} className="btn-delete">
+                    <button onClick={() => handleDelete(item._id)} className="btn-delete">
                       <FaTrash /> Delete
                     </button>
-                    <Link to={`/portfolio/${item.id}`} className="btn-view" target="_blank">
+                    <Link to={`/portfolio/${item.slug}`} className="btn-view" target="_blank">
                       <FaEye /> View
                     </Link>
                   </div>
@@ -144,13 +204,31 @@ function PortfolioManagement() {
         </div>
         
         <div className="pagination">
-          <button className="pagination-btn">Previous</button>
+          <button 
+            className="pagination-btn" 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
           <div className="pagination-numbers">
-            <button className="pagination-number active">1</button>
-            <button className="pagination-number">2</button>
-            <button className="pagination-number">3</button>
+            {[...Array(totalPages).keys()].map(number => (
+              <button 
+                key={number + 1}
+                className={`pagination-number ${currentPage === number + 1 ? 'active' : ''}`}
+                onClick={() => handlePageChange(number + 1)}
+              >
+                {number + 1}
+              </button>
+            ))}
           </div>
-          <button className="pagination-btn">Next</button>
+          <button 
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

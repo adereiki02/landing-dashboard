@@ -12,6 +12,8 @@ import NewsManagement from './pages/Dashboard/NewsManagement';
 import PortfolioManagement from './pages/Dashboard/PortfolioManagement';
 import PartnersManagement from './pages/Dashboard/PartnersManagement';
 import WebsiteSettings from './pages/Dashboard/WebsiteSettings';
+import PartnerForm from './components/dashboard/PartnerForm';
+import NewsForm from './components/dashboard/NewsForm';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import './styles/Landing.css';
 import './styles/Dashboard.css';
@@ -61,6 +63,26 @@ function App() {
         <Route path="/dashboard/partners" element={
           <ProtectedRoute>
             <PartnersManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/partners/create" element={
+          <ProtectedRoute>
+            <PartnerForm />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/partners/edit/:id" element={
+          <ProtectedRoute>
+            <PartnerForm />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/news/create" element={
+          <ProtectedRoute>
+            <NewsForm />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/news/edit/:id" element={
+          <ProtectedRoute>
+            <NewsForm />
           </ProtectedRoute>
         } />
         <Route path="/dashboard/settings" element={
