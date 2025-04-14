@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaNewspaper, FaBriefcase, FaHandshake, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import '../../styles/Dashboard.css';
+import reikiLogo from '../../assets/reikidevelop.png';
 
 function Sidebar() {
   const location = useLocation();
@@ -23,7 +24,7 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h3>ReikiDevs Admin</h3>
+        <img src={reikiLogo} alt="ReikiDevs Logo" className="sidebar-logo" />
       </div>
       <div className="sidebar-user">
         <div className="user-avatar">

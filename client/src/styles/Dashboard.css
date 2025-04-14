@@ -3,26 +3,51 @@
   height: 100vh;
 }
 
+/* Import the same font as the main website */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Define ReikiDevelop brand colors */
+:root {
+  --primary-color: #0066FF; /* Warna biru utama */
+  --primary-hover: #0055DD;
+  --secondary-color: #3B82F6; /* Warna biru muda */
+  --accent-color: #60A5FA;
+  --light-accent: #E6F0FF; /* Warna biru sangat muda */
+  --light-color: #F9FAFB;
+  --dark-color: #111827;
+  --gray-color: #6B7280;
+  --info-color: #3498DB; /* Warna biru info */
+  --warning-color: #F39C12; /* Warna kuning warning */
+  --danger-color: #E74C3C; /* Warna merah danger */
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --transition: all 0.3s ease-in-out;
+}
+
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
-  background-color: #1a2b47; /* Darker blue based on ReikiDevs brand */
+  background-color: #0D1B2A; /* Darker shade of blue for sidebar */
   color: white;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .sidebar-header {
   padding: 1rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.sidebar-header h3 {
-  color: #4ecdc4; /* Teal accent color */
-  margin: 0;
+.sidebar-logo {
+  max-width: 180px;
+  height: auto;
+  margin-bottom: 0.5rem;
 }
 
 .sidebar-user {
@@ -37,17 +62,19 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #4ecdc4; /* Teal accent color */
+  background-color: var(--primary-color); /* Using primary color for avatar */
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   margin-right: 0.75rem;
+  color: white;
 }
 
 .user-info h4 {
   margin: 0;
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .user-info p {
@@ -74,21 +101,24 @@
   border-radius: 4px;
   color: white;
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: var(--transition);
+  font-weight: 500;
 }
 
 .sidebar-menu li a svg {
   margin-right: 0.75rem;
-  color: #4ecdc4; /* Teal accent color */
+  color: var(--primary-color); /* Using primary color for icons */
 }
 
 .sidebar-menu li.active a {
-  background-color: rgba(78, 205, 196, 0.2); /* Teal with opacity */
-  font-weight: bold;
+  background-color: rgba(0, 102, 255, 0.15); /* Primary color with opacity */
+  font-weight: 600;
+  border-left: 3px solid var(--primary-color); /* Using primary color for border */
 }
 
 .sidebar-menu li a:hover {
-  background-color: rgba(78, 205, 196, 0.1); /* Teal with opacity */
+  background-color: rgba(0, 102, 255, 0.1); /* Primary color with lower opacity */
+  border-left: 3px solid var(--primary-color); /* Using primary color for border */
 }
 
 .sidebar-footer {
@@ -99,7 +129,7 @@
 .logout-btn {
   width: 100%;
   padding: 0.75rem;
-  background-color: rgba(255, 76, 76, 0.8); /* Red color */
+  background-color: rgba(239, 68, 68, 0.8); /* Red color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -108,6 +138,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
+  transition: var(--transition);
 }
 
 .logout-btn svg {
@@ -115,15 +148,17 @@
 }
 
 .logout-btn:hover {
-  background-color: #ff4c4c; /* Brighter red */
+  background-color: rgb(239, 68, 68); /* Brighter red */
+  transform: translateY(-2px);
 }
 
 /* Main Content Styles */
 .main-content {
   flex: 1;
   padding: 1rem 2rem;
-  background-color: #f5f7fa; /* Light gray background */
+  background-color: #F0F5FF; /* Light blue background */
   overflow-y: auto;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .dashboard-header {
@@ -132,7 +167,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 2px solid rgba(0, 102, 255, 0.1); /* Primary color with opacity */
 }
 
 .header-search {
@@ -141,10 +176,19 @@
 
 .header-search input {
   padding: 0.5rem 1rem 0.5rem 2.5rem;
-  border-radius: 4px;
+  border-radius: 0.5rem;
   border: 1px solid #ddd;
   width: 300px;
   font-size: 0.9rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: var(--transition);
+  background-color: #F9FAFB;
+}
+
+.header-search input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
 }
 
 .header-search svg {
@@ -152,12 +196,38 @@
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #7f8c8d;
+  color: var(--primary-color);
 }
 
 .header-user {
   display: flex;
   align-items: center;
+  gap: 1rem;
+}
+
+.header-user span {
+  font-weight: 500;
+  color: var(--dark-color);
+}
+
+.header-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #E74C3C;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.header-logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.2);
 }
 
 .avatar {
@@ -170,15 +240,22 @@
 /* Dashboard Welcome Section */
 .dashboard-welcome {
   margin-bottom: 2rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--card-shadow);
+  border-left: 4px solid var(--primary-color); /* Primary blue from ReikiDevelop */
 }
 
 .dashboard-welcome h2 {
   margin-bottom: 0.5rem;
-  color: #1a2b47; /* Dark blue from brand */
+  color: var(--dark-color); /* Dark color from ReikiDevelop */
+  font-weight: 700;
 }
 
 .dashboard-welcome p {
-  color: #7f8c8d;
+  color: var(--gray-color);
+  margin-bottom: 0;
 }
 
 /* Dashboard Cards */
@@ -192,10 +269,31 @@
 .card {
   background-color: white;
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-top: 3px solid #4ecdc4; /* Teal accent border */
+  border-radius: 0.75rem;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  border-top: 3px solid var(--primary-color); /* Using primary color for border */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px -10px rgba(0, 102, 255, 0.15);
+}
+
+.card h3 {
+  color: var(--dark-color); /* Dark color for better readability */
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card p {
+  color: var(--gray-color);
+  margin-bottom: 0;
 }
 
 .card:hover {
@@ -207,24 +305,52 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  width: 100%;
 }
 
 .card-icon {
-  font-size: 1.5rem;
-  color: #4ecdc4; /* Teal accent color */
+  font-size: 1.8rem;
+  color: var(--primary-color); /* Using primary color for icons */
+  display: block; /* Ensure icon is displayed as block */
+}
+
+.icon-container {
+  background-color: rgba(0, 102, 255, 0.15); /* Slightly darker blue background */
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 102, 255, 0.1); /* Subtle shadow for depth */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem; /* Ensure minimum width */
+  min-height: 3rem; /* Ensure minimum height */
 }
 
 .card h1 {
-  font-size: 1.8rem;
-  color: #1a2b47; /* Dark blue from brand */
-  margin: 0.5rem 0;
+  font-size: 2rem;
+  color: var(--primary-color); /* Using primary color for values */
+  margin: 0.5rem 0 0.25rem 0;
+  font-weight: 700;
 }
 
 .card p {
-  color: #4ecdc4; /* Teal accent color */
+  color: #FF8A00; /* Bright orange for notifications */
   font-size: 0.9rem;
+  font-weight: 600;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(255, 138, 0, 0.1); /* Light orange background */
+  padding: 0.3rem 0.6rem;
+  border-radius: 1rem;
+}
+
+/* Notification icon styling */
+.notification-icon {
+  margin-right: 0.3rem;
+  font-size: 0.8rem;
+  color: #FF8A00; /* Matching orange color */
 }
 
 /* Dashboard Charts */
@@ -237,23 +363,111 @@
 
 .chart-container {
   background-color: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border-left: 3px solid #4ecdc4; /* Teal accent border */
+  padding: 1.75rem;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  border: 1px solid rgba(0, 102, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.chart-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px -10px rgba(0, 102, 255, 0.15);
 }
 
 .chart-container h3 {
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #1a2b47; /* Dark blue from brand */
+  color: var(--dark-color);
   display: flex;
   align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .chart-container h3 svg {
-  margin-right: 0.5rem;
-  color: #4ecdc4; /* Teal accent color */
+  margin-right: 0.75rem;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chart-header .chart-period {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-period select {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  font-size: 0.85rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--dark-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.chart-period select:hover {
+  border-color: var(--primary-color);
+}
+
+.chart-period select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--gray-color);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.visitors-color {
+  background-color: #8884d8;
+}
+
+.content-color {
+  background-color: #82ca9d;
 }
 
 /* Quick Actions */
@@ -263,7 +477,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
-  border-bottom: 3px solid #4ecdc4; /* Teal accent border */
+  border-bottom: 3px solid var(--accent-color); /* Biru accent border */
 }
 
 .dashboard-quick-actions h3 {
@@ -280,7 +494,7 @@
 
 .quick-action-btn {
   padding: 0.75rem 1.5rem;
-  background-color: #4ecdc4; /* Teal accent color */
+  background-color: var(--accent-color); /* Biru accent color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -290,7 +504,7 @@
 }
 
 .quick-action-btn:hover {
-  background-color: #3dbeb6; /* Darker teal */
+  background-color: var(--secondary-color); /* Biru secondary color */
 }
 
 /* Content Header */
@@ -308,7 +522,7 @@
 
 .btn-primary {
   padding: 0.75rem 1.5rem;
-  background-color: #4ecdc4; /* Teal accent color */
+  background-color: var(--primary-color); /* Biru primary color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -323,7 +537,7 @@
 }
 
 .btn-primary:hover {
-  background-color: #3dbeb6; /* Darker teal */
+  background-color: var(--primary-hover); /* Biru primary hover */
 }
 
 /* Search and Filter */
@@ -407,8 +621,8 @@
 }
 
 .status-badge.published {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--light-accent); /* Light blue */
+  color: var(--primary-color); /* Biru primary color */
 }
 
 .status-badge.draft {
@@ -431,9 +645,9 @@
 }
 
 .btn-edit {
-  background-color: #e3f9f7; /* Light teal */
-  color: #4ecdc4; /* Teal accent color */
-  border: 1px solid #c5f1ed;
+  background-color: var(--light-accent); /* Light blue */
+  color: var(--primary-color); /* Biru primary color */
+  border: 1px solid var(--accent-color);
 }
 
 .btn-delete {
@@ -488,9 +702,9 @@
 }
 
 .pagination-number.active {
-  background-color: #4ecdc4; /* Teal accent color */
+  background-color: var(--primary-color); /* Biru primary color */
   color: white;
-  border-color: #4ecdc4; /* Teal accent color */
+  border-color: var(--primary-color); /* Biru primary color */
 }
 
 /* Portfolio Grid */
@@ -535,7 +749,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #4ecdc4; /* Teal accent color */
+  background-color: var(--primary-color); /* Biru primary color */
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 50px;
@@ -579,9 +793,9 @@
 }
 
 .btn-feature.featured {
-  background-color: #e3f9f7; /* Light teal */
-  color: #4ecdc4; /* Teal accent color */
-  border-color: #c5f1ed;
+  background-color: var(--light-accent); /* Light blue */
+  color: var(--primary-color); /* Biru primary color */
+  border-color: var(--accent-color);
 }
 
 .action-buttons {
@@ -622,7 +836,7 @@
 .website-link {
   display: flex;
   align-items: center;
-  color: #4ecdc4; /* Teal accent color */
+  color: var(--primary-color); /* Biru primary color */
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -641,8 +855,8 @@
 }
 
 .status-toggle.active {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--light-accent); /* Light blue */
+  color: var(--primary-color); /* Biru primary color */
 }
 
 .status-toggle.inactive {
@@ -673,7 +887,7 @@
 
 .settings-section h3 svg {
   margin-right: 0.5rem;
-  color: #4ecdc4; /* Teal accent color */
+  color: var(--accent-color); /* Biru accent color */
 }
 
 .form-group {
@@ -787,7 +1001,7 @@
 
 .btn-save {
   padding: 0.75rem 1.5rem;
-  background-color: #4ecdc4; /* Teal accent color */
+  background-color: var(--primary-color); /* Biru primary color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -802,7 +1016,7 @@
 }
 
 .btn-save:hover {
-  background-color: #3dbeb6; /* Darker teal */
+  background-color: var(--primary-hover); /* Biru primary hover */
 }
 
 .btn-save:disabled {
@@ -824,7 +1038,7 @@
   align-items: center;
   height: 100vh;
   font-size: 1.2rem;
-  color: #4ecdc4; /* Teal accent color */
+  color: var(--primary-color); /* Biru primary color */
 }
 
 /* Back to Home Link */
@@ -833,13 +1047,19 @@
 }
 
 .back-to-home a {
-  color: #4ecdc4; /* Teal accent color */
+  color: var(--primary-color); /* Biru primary color */
   text-decoration: none;
   display: inline-flex;
   align-items: center;
 }
 
 /* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-container {
     flex-direction: column;
@@ -869,5 +1089,47 @@
   
   .portfolio-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .dashboard-cards {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .chart-container {
+    padding: 1.25rem;
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .chart-period select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-welcome {
+    padding: 1.25rem;
+  }
+  
+  .chart-container h3 {
+    font-size: 1rem;
+  }
+  
+  .chart-legend {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
   }
 }

@@ -95,31 +95,115 @@ function Dashboard() {
         
         <div className="dashboard-charts">
           <div className="chart-container">
-            <h3><FaChartLine /> Visitor Trends</h3>
+            <div className="chart-header">
+              <h3><FaChartLine /> Visitor Trends</h3>
+              <div className="chart-period">
+                <select defaultValue="6months">
+                  <option value="30days">Last 30 Days</option>
+                  <option value="3months">Last 3 Months</option>
+                  <option value="6months">Last 6 Months</option>
+                  <option value="1year">Last Year</option>
+                </select>
+              </div>
+            </div>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={visitorData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="visitors" stroke="#8884d8" activeDot={{ r: 8 }} />
+              <LineChart data={visitorData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fill: '#6B7280', fontSize: 12 }}
+                  axisLine={{ stroke: '#e0e0e0' }}
+                />
+                <YAxis 
+                  tick={{ fill: '#6B7280', fontSize: 12 }}
+                  axisLine={{ stroke: '#e0e0e0' }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '10px'
+                  }}
+                  labelStyle={{ fontWeight: 'bold', marginBottom: '5px' }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="visitors" 
+                  stroke="#8884d8" 
+                  strokeWidth={3}
+                  dot={{ stroke: '#8884d8', strokeWidth: 2, r: 4, fill: '#fff' }}
+                  activeDot={{ r: 8, stroke: '#8884d8', strokeWidth: 2, fill: '#fff' }} 
+                />
               </LineChart>
             </ResponsiveContainer>
+            <div className="chart-legend">
+              <div className="legend-item">
+                <div className="legend-color visitors-color"></div>
+                <span>Website Visitors</span>
+              </div>
+              <div className="legend-item">
+                <span>Total: 30,500 visitors</span>
+              </div>
+            </div>
           </div>
           
           <div className="chart-container">
-            <h3>Content Overview</h3>
+            <div className="chart-header">
+              <h3><FaNewspaper /> Content Overview</h3>
+              <div className="chart-period">
+                <select defaultValue="current">
+                  <option value="current">Current</option>
+                  <option value="lastMonth">Last Month</option>
+                  <option value="lastQuarter">Last Quarter</option>
+                </select>
+              </div>
+            </div>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={contentData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" fill="#82ca9d" />
+              <BarChart 
+                data={contentData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fill: '#6B7280', fontSize: 12 }}
+                  axisLine={{ stroke: '#e0e0e0' }}
+                />
+                <YAxis 
+                  tick={{ fill: '#6B7280', fontSize: 12 }}
+                  axisLine={{ stroke: '#e0e0e0' }}
+                />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(130, 202, 157, 0.1)' }}
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '10px'
+                  }}
+                  labelStyle={{ fontWeight: 'bold', marginBottom: '5px' }}
+                />
+                <Bar 
+                  dataKey="count" 
+                  fill="#82ca9d" 
+                  radius={[4, 4, 0, 0]}
+                  barSize={40}
+                  animationDuration={1500}
+                />
               </BarChart>
             </ResponsiveContainer>
+            <div className="chart-legend">
+              <div className="legend-item">
+                <div className="legend-color content-color"></div>
+                <span>Content Items</span>
+              </div>
+              <div className="legend-item">
+                <span>Total: 54 items</span>
+              </div>
+            </div>
           </div>
         </div>
         
