@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import '../../styles/NewsList.css';
-import { FaArrowUp } from 'react-icons/fa';
 
 // Menggunakan data berita yang sama dengan NewsDetail
 const newsItems = [
@@ -120,13 +119,6 @@ function NewsList() {
     // Search is already handled by the useEffect
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
   return (
     <div className="news-list-page">
       <Navbar />
@@ -186,14 +178,16 @@ function NewsList() {
           {/* Main Content */}
           <div className="news-main-content">
             <div className="news-search-bar">
-              <form onSubmit={handleSearch} className="search-input-wrapper">
-                <input 
-                  type="text" 
-                  placeholder="Cari berita..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <button type="submit">Cari</button>
+              <form onSubmit={handleSearch}>
+                <div className="search-input-wrapper">
+                  <input 
+                    type="text" 
+                    placeholder="Cari berita..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <button type="submit">Cari</button>
+                </div>
               </form>
             </div>
             
@@ -250,10 +244,18 @@ function NewsList() {
             <div className="sidebar-section">
               <h3>Ikuti Kami</h3>
               <div className="social-links">
-                <a href="https://facebook.com/reikidevs" className="social-link">Facebook</a>
-                <a href="https://twitter.com/reikidevs" className="social-link">Twitter</a>
-                <a href="https://instagram.com/reikidevs" className="social-link">Instagram</a>
-                <a href="https://linkedin.com/company/reikidevs" className="social-link">LinkedIn</a>
+                  <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="social-link whatsapp">
+                    <i className="fab fa-whatsapp"></i>
+                  </a>
+                  <a href="https://instagram.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link instagram">
+                    <i className="fab fa-instagram"></i>
+                  </a>
+                  <a href="https://facebook.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link facebook">
+                    <i className="fab fa-facebook-f"></i>
+                  </a>
+                  <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                    <i className="fab fa-linkedin-in"></i>
+                  </a>
               </div>
             </div>
           </div>
@@ -261,19 +263,8 @@ function NewsList() {
       </div>
       
       <Footer />
-
-      {/* Back to Top Button */}
-      {showBackToTop && (
-        <button 
-          className="back-to-top-btn" 
-          onClick={scrollToTop}
-          aria-label="Kembali ke atas"
-        >
-          <FaArrowUp />
-        </button>
-      )}
     </div>
   );
 }
 
-export default NewsList;
+export default NewsList;;
