@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
+import BackToTop from '../../components/common/BackToTop';
 import '../../styles/NewsList.css';
+import '../../styles/BackToTop.css';
 
 // Menggunakan data berita yang sama dengan NewsDetail
 const newsItems = [
@@ -56,27 +58,9 @@ function NewsList() {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [activeArchive, setActiveArchive] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     document.title = "Blog - reikidevs";
-  }, []);
-
-  // Control back to top button visibility
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
   }, []);
 
   useEffect(() => {
@@ -263,6 +247,7 @@ function NewsList() {
       </div>
       
       <Footer />
+      <BackToTop />
     </div>
   );
 }
