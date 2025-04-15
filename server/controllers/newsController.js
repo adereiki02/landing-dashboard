@@ -103,7 +103,10 @@ exports.createNews = async (req, res) => {
     }
     
     // Generate excerpt automatically (first 300 characters)
-    const excerpt = content.length > 300 ? content.substring(0, 300) + '...' : content;
+    // Strip HTML tags for character count
+    const textContent = content.replace(/<[^>]*>/g, '');
+    // Limit to 300 characters
+    const excerpt = textContent.length > 300 ? textContent.substring(0, 297) + '...' : textContent;
     
     // Handle featured image upload
     const featuredImage = req.file ? `/uploads/news/${req.file.filename}` : '';
@@ -187,7 +190,13 @@ exports.updateNews = async (req, res) => {
     }
     
     // Generate excerpt automatically (first 300 characters)
-    const excerpt = content ? (content.length > 300 ? content.substring(0, 300) + '...' : content) : news.excerpt;
+    let excerpt = news.excerpt;
+    if (content) {
+      // Strip HTML tags for character count
+      const textContent = content.replace(/<[^>]*>/g, '');
+      // Limit to 300 characters
+      excerpt = textContent.length > 300 ? textContent.substring(0, 297) + '...' : textContent;
+    }
     
     // Handle featured image upload
     const featuredImage = req.file ? `/uploads/news/${req.file.filename}` : news.featuredImage;

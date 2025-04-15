@@ -38,7 +38,7 @@ const newsSchema = new mongoose.Schema(
     tags: [{
       type: String,
       trim: true,
-      maxlength: 20
+      maxlength: 50 // Increased from 20 to accommodate longer tags
     }],
     author: {
       type: mongoose.Schema.Types.ObjectId,

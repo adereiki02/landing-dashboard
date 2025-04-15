@@ -334,7 +334,7 @@ function NewsForm() {
                 placeholder="Enter news content (min 20 characters)"
               ></textarea>
               {errors.content && <div className="error-message">{errors.content}</div>}
-              <div className="form-hint">The excerpt will be automatically generated from the content.</div>
+              <div className="form-hint">The excerpt will be automatically generated from the content. Note: The excerpt is limited to 300 characters, so make sure the first paragraph of your content is concise.</div>
             </div>
             
             <div className="form-group">
