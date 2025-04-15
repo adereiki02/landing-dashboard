@@ -598,18 +598,18 @@ function NewsList() {
             <div className="sidebar-section">
               <h2>Ikuti Kami</h2>
               <div className="social-links">
-                <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="social-link whatsapp" aria-label="WhatsApp">
-                  <i className="fab fa-whatsapp"></i> WhatsApp
-                </a>
-                <a href="https://instagram.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link instagram" aria-label="Instagram">
-                  <i className="fab fa-instagram"></i> Instagram
-                </a>
-                <a href="https://facebook.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link facebook" aria-label="Facebook">
-                  <i className="fab fa-facebook-f"></i> Facebook
-                </a>
-                <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin" aria-label="LinkedIn">
-                  <i className="fab fa-linkedin-in"></i> LinkedIn
-                </a>
+              <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="social-link whatsapp">
+                    <i className="fab fa-whatsapp"></i>
+                  </a>
+                  <a href="https://instagram.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link instagram">
+                    <i className="fab fa-instagram"></i>
+                  </a>
+                  <a href="https://facebook.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link facebook">
+                    <i className="fab fa-facebook-f"></i>
+                  </a>
+                  <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                    <i className="fab fa-linkedin-in"></i>
+                  </a>
               </div>
             </div>
           </div>
