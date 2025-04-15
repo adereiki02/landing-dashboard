@@ -1,149 +1,195 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import axios from 'axios';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import BackToTop from '../../components/common/BackToTop';
 import '../../styles/NewsList.css';
 import '../../styles/BackToTop.css';
-import { FaCalendarAlt, FaEye, FaClock, FaSearch, FaTags, FaFolder, FaChevronRight, FaFilter, FaTimes, FaArrowUp } from 'react-icons/fa';
+import { FaCalendarAlt, FaEye, FaClock, FaSearch, FaTags, FaFolder, FaChevronRight, FaFilter, FaTimes, FaArrowUp, FaExclamationTriangle } from 'react-icons/fa';
 
-// Menggunakan data berita yang sama dengan NewsDetail
-const newsItems = [
-  {
-    id: 1,
-    title: "Peluncuran Website Baru BPBD Jawa Tengah",
-    date: "15 Juni 2023",
-    excerpt: "reikidevs berhasil meluncurkan website baru untuk Badan Penanggulangan Bencana Daerah (BPBD) Jawa Tengah dengan fitur pelaporan bencana real-time.",
-    image: "https://images.unsplash.com/photo-1593642532400-2682810df593?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Proyek Terbaru",
-    tags: ["website", "pemerintah", "disaster management"],
-    author: "Tim reikidevs",
-    readingTime: "5 menit",
-    views: 1240,
-    slug: "peluncuran-website-baru-bpbd-jawa-tengah"
-  },
-  {
-    id: 2,
-    title: "Aplikasi Antrian Digital untuk Rumah Sakit",
-    date: "3 Mei 2023",
-    excerpt: "Sistem antrian digital yang dikembangkan oleh reikidevs kini telah diimplementasikan di 5 rumah sakit besar di Indonesia.",
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Inovasi",
-    tags: ["aplikasi", "healthcare", "digital transformation"],
-    author: "Budi Santoso",
-    readingTime: "4 menit",
-    views: 980,
-    slug: "aplikasi-antrian-digital-untuk-rumah-sakit"
-  },
-  {
-    id: 3,
-    title: "reikidevs Raih Penghargaan Top Digital Agency 2023",
-    date: "20 April 2023",
-    excerpt: "reikidevs berhasil meraih penghargaan sebagai Top Digital Agency 2023 dalam ajang Indonesia Digital Awards.",
-    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Penghargaan",
-    tags: ["award", "digital agency", "prestasi"],
-    author: "Dewi Lestari",
-    readingTime: "3 menit",
-    views: 1560,
-    slug: "reikidevs-raih-penghargaan-top-digital-agency-2023"
-  },
-  {
-    id: 4,
-    title: "Workshop Digital Marketing untuk UKM",
-    date: "10 Maret 2023",
-    excerpt: "reikidevs mengadakan workshop digital marketing gratis untuk membantu UKM meningkatkan presence online mereka.",
-    image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Event",
-    tags: ["workshop", "digital marketing", "UKM"],
-    author: "Andi Wijaya",
-    readingTime: "6 menit",
-    views: 820,
-    slug: "workshop-digital-marketing-untuk-ukm"
-  },
-  {
-    id: 5,
-    title: "Tren Teknologi Web yang Perlu Diperhatikan di 2023",
-    date: "25 Februari 2023",
-    excerpt: "Perkembangan teknologi web terus bergerak cepat. Simak tren terbaru yang perlu diperhatikan para developer dan bisnis di tahun 2023.",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Teknologi",
-    tags: ["web development", "trend", "teknologi"],
-    author: "Rini Puspita",
-    readingTime: "8 menit",
-    views: 2100,
-    slug: "tren-teknologi-web-yang-perlu-diperhatikan-di-2023"
-  },
-  {
-    id: 6,
-    title: "Pentingnya User Experience dalam Pengembangan Aplikasi",
-    date: "12 Januari 2023",
-    excerpt: "User Experience (UX) menjadi faktor krusial dalam kesuksesan sebuah aplikasi. Pelajari bagaimana meningkatkan UX dalam produk digital Anda.",
-    image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Desain",
-    tags: ["UX", "desain", "aplikasi"],
-    author: "Maya Sari",
-    readingTime: "7 menit",
-    views: 1750,
-    slug: "pentingnya-user-experience-dalam-pengembangan-aplikasi"
-  }
-];
-
-// Daftar kategori unik dari berita
-const categories = [...new Set(newsItems.map(item => item.category))];
-
-// Daftar tag unik dari berita
-const allTags = [...new Set(newsItems.flatMap(item => item.tags))];
-
-// Ekstrak bulan dan tahun dari tanggal berita untuk arsip
-const getMonthYear = (dateStr) => {
-  const [, month, year] = dateStr.split(' ');
-  return `${month} ${year}`;
+// Fungsi untuk memformat tanggal dari format ISO ke format yang lebih mudah dibaca
+const formatDate = (isoDate) => {
+  if (!isoDate) return '';
+  const date = new Date(isoDate);
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('id-ID', options);
 };
 
-const archives = [...new Set(newsItems.map(item => getMonthYear(item.date)))];
+// Ekstrak bulan dan tahun dari tanggal berita untuk arsip
+const getMonthYear = (isoDate) => {
+  if (!isoDate) return '';
+  const date = new Date(isoDate);
+  const options = { month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('id-ID', options);
+};
 
 function NewsList() {
-  const [filteredNews, setFilteredNews] = useState(newsItems);
+  const [newsItems, setNewsItems] = useState([]);
+  const [filteredNews, setFilteredNews] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [allTags, setAllTags] = useState([]);
+  const [archives, setArchives] = useState([]);
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [activeArchive, setActiveArchive] = useState('');
   const [activeTags, setActiveTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(4);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   // SEO-related metadata
   const pageTitle = "Blog reikidevs - Berita Terbaru dan Insight Teknologi";
   const pageDescription = "Temukan berita terbaru, update proyek, dan insight teknologi dari tim reikidevs. Kami berbagi pengetahuan dan pengalaman dalam pengembangan web, mobile, dan solusi digital.";
 
+  // Function to load dummy data (not a Hook)
+  const loadDummyData = () => {
+    console.log('Using dummy data');
+    const dummyNews = [
+      {
+        id: 1,
+        title: "Peluncuran Website Baru BPBD Jawa Tengah",
+        createdAt: "2023-06-15T00:00:00.000Z",
+        excerpt: "reikidevs berhasil meluncurkan website baru untuk Badan Penanggulangan Bencana Daerah (BPBD) Jawa Tengah dengan fitur pelaporan bencana real-time.",
+        image: "https://images.unsplash.com/photo-1593642532400-2682810df593?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        category: "Proyek Terbaru",
+        tags: ["website", "pemerintah", "disaster management"],
+        author: "Tim reikidevs",
+        readingTime: "5 menit",
+        views: 1240,
+        slug: "peluncuran-website-baru-bpbd-jawa-tengah"
+      },
+      {
+        id: 2,
+        title: "Aplikasi Antrian Digital untuk Rumah Sakit",
+        createdAt: "2023-05-03T00:00:00.000Z",
+        excerpt: "Sistem antrian digital yang dikembangkan oleh reikidevs kini telah diimplementasikan di 5 rumah sakit besar di Indonesia.",
+        image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        category: "Inovasi",
+        tags: ["aplikasi", "healthcare", "digital transformation"],
+        author: "Budi Santoso",
+        readingTime: "4 menit",
+        views: 980,
+        slug: "aplikasi-antrian-digital-untuk-rumah-sakit"
+      },
+      {
+        id: 3,
+        title: "reikidevs Raih Penghargaan Top Digital Agency 2023",
+        createdAt: "2023-04-20T00:00:00.000Z",
+        excerpt: "reikidevs berhasil meraih penghargaan sebagai Top Digital Agency 2023 dalam ajang Indonesia Digital Awards.",
+        image: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        category: "Penghargaan",
+        tags: ["award", "digital agency", "prestasi"],
+        author: "Dewi Lestari",
+        readingTime: "3 menit",
+        views: 1560,
+        slug: "reikidevs-raih-penghargaan-top-digital-agency-2023"
+      }
+    ];
+    
+    setNewsItems(dummyNews);
+    setFilteredNews(dummyNews);
+    
+    // Extract unique categories
+    const uniqueCategories = [...new Set(dummyNews.map(item => item.category))];
+    setCategories(uniqueCategories);
+    
+    // Extract unique tags
+    const uniqueTags = [...new Set(dummyNews.flatMap(item => item.tags || []))];
+    setAllTags(uniqueTags);
+    
+    // Extract unique archives (month and year)
+    const uniqueArchives = [...new Set(dummyNews.map(item => getMonthYear(item.createdAt)))];
+    setArchives(uniqueArchives);
+  };
+
+  // Fetch news data from API
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        try {
+          const response = await axios.get('/api/news');
+          console.log('API Response:', response.data);
+          
+          // Check if response.data has a news property (from the API structure)
+          const newsData = response.data.news || response.data;
+          const news = Array.isArray(newsData) ? newsData : [];
+          
+          console.log('Processed news data:', news);
+          
+          if (news.length > 0) {
+            setNewsItems(news);
+            setFilteredNews(news);
+            
+            // Extract unique categories
+            const uniqueCategories = [...new Set(news.map(item => item.category).filter(Boolean))];
+            setCategories(uniqueCategories);
+            
+            // Extract unique tags
+            const uniqueTags = [...new Set(news.flatMap(item => item.tags || []))];
+            setAllTags(uniqueTags);
+            
+            // Extract unique archives (month and year)
+            const uniqueArchives = [...new Set(news.map(item => getMonthYear(item.createdAt)).filter(Boolean))];
+            setArchives(uniqueArchives);
+          } else {
+            console.log('No news data found in API response, using dummy data');
+            // Jika API mengembalikan array kosong, gunakan data dummy
+            loadDummyData();
+          }
+        } catch (apiError) {
+          console.error('API Error:', apiError);
+          // Jika API belum tersedia, gunakan data dummy
+          loadDummyData();
+        }
+        
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setError('Gagal memuat berita. Silakan coba lagi nanti.');
+        setIsLoading(false);
+        // Pastikan filteredNews adalah array kosong jika terjadi error
+        setFilteredNews([]);
+      }
+    };
+    
+    fetchNews();
+  }, []);
+
   useEffect(() => {
     document.title = pageTitle;
   }, []);
 
   useEffect(() => {
+    // Skip filtering if news items haven't been loaded yet
+    if (!Array.isArray(newsItems) || newsItems.length === 0) return;
+    
     // Simulate loading state for better UX
     setIsLoading(true);
     
     const timer = setTimeout(() => {
-      let result = newsItems;
+      let result = [...newsItems]; // Pastikan kita bekerja dengan copy array
       
       // Filter berdasarkan kategori
       if (activeCategory !== 'Semua') {
-        result = result.filter(item => item.category === activeCategory);
+        result = result.filter(item => item && item.category === activeCategory);
       }
       
       // Filter berdasarkan arsip (bulan & tahun)
       if (activeArchive) {
-        result = result.filter(item => getMonthYear(item.date) === activeArchive);
+        result = result.filter(item => item && getMonthYear(item.createdAt) === activeArchive);
       }
       
       // Filter berdasarkan tag
       if (activeTags.length > 0) {
         result = result.filter(item => 
-          activeTags.some(tag => item.tags && item.tags.includes(tag))
+          item && item.tags && activeTags.some(tag => item.tags.includes(tag))
         );
       }
       
@@ -151,9 +197,11 @@ function NewsList() {
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
         result = result.filter(item => 
-          item.title.toLowerCase().includes(term) || 
-          item.excerpt.toLowerCase().includes(term) ||
-          (item.tags && item.tags.some(tag => tag.toLowerCase().includes(term)))
+          item && (
+            (item.title && item.title.toLowerCase().includes(term)) || 
+            (item.excerpt && item.excerpt.toLowerCase().includes(term)) ||
+            (item.tags && item.tags.some(tag => tag.toLowerCase().includes(term)))
+          )
         );
       }
       
@@ -163,7 +211,7 @@ function NewsList() {
     }, 400); // Small delay to show loading state
     
     return () => clearTimeout(timer);
-  }, [activeCategory, activeArchive, activeTags, searchTerm]);
+  }, [activeCategory, activeArchive, activeTags, searchTerm, newsItems]);
 
   const handleCategoryClick = (category) => {
     setIsLoading(true);
@@ -218,10 +266,11 @@ function NewsList() {
   };
   
   // Pagination logic
+  const safeFilteredNews = Array.isArray(filteredNews) ? filteredNews : [];
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredNews.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
+  const currentItems = safeFilteredNews.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(safeFilteredNews.length / itemsPerPage);
   
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -410,11 +459,11 @@ function NewsList() {
                     aria-pressed={activeCategory === 'Semua'}
                   >
                     <FaFolder /> Semua
-                    <span className="category-count">{newsItems.length}</span>
+                    <span className="category-count">{Array.isArray(newsItems) ? newsItems.length : 0}</span>
                   </button>
                 </li>
-                {categories.map(category => {
-                  const count = newsItems.filter(item => item.category === category).length;
+                {Array.isArray(categories) && categories.map(category => {
+                  const count = Array.isArray(newsItems) ? newsItems.filter(item => item && item.category === category).length : 0;
                   return (
                     <li key={category}>
                       <button 
@@ -434,8 +483,8 @@ function NewsList() {
             <div className="sidebar-section">
               <h2>Arsip</h2>
               <ul className="archive-list">
-                {archives.map(archive => {
-                  const count = newsItems.filter(item => getMonthYear(item.date) === archive).length;
+                {Array.isArray(archives) && archives.map(archive => {
+                  const count = Array.isArray(newsItems) ? newsItems.filter(item => item && getMonthYear(item.createdAt) === archive).length : 0;
                   return (
                     <li key={archive}>
                       <button 
@@ -455,8 +504,8 @@ function NewsList() {
             <div className="sidebar-section">
               <h2>Tag</h2>
               <div className="tag-cloud">
-                {allTags.map(tag => {
-                  const count = newsItems.filter(item => item.tags && item.tags.includes(tag)).length;
+                {Array.isArray(allTags) && allTags.map(tag => {
+                  const count = Array.isArray(newsItems) ? newsItems.filter(item => item && item.tags && item.tags.includes(tag)).length : 0;
                   return (
                     <button 
                       key={tag}
@@ -484,6 +533,15 @@ function NewsList() {
                 <div className="loading-spinner"></div>
                 <p>Memuat artikel...</p>
               </div>
+            ) : error ? (
+              <div className="error-state">
+                <FaExclamationTriangle className="error-icon" />
+                <h2>Terjadi Kesalahan</h2>
+                <p>{error}</p>
+                <button className="retry-button" onClick={() => window.location.reload()}>
+                  Coba Lagi
+                </button>
+              </div>
             ) : filteredNews.length > 0 ? (
               <>
                 <div className="news-results-info">
@@ -491,11 +549,11 @@ function NewsList() {
                 </div>
                 
                 <div className="news-grid">
-                  {currentItems.map(item => (
-                    <div key={item.id} className="news-card">
-                      <Link to={`/berita/${item.slug}`} className="news-card-link">
+                  {Array.isArray(currentItems) && currentItems.map(item => (
+                    <div key={item._id || item.id} className="news-card">
+                      <Link to={`/berita/${item.slug || item._id || item.id}`} className="news-card-link">
                         <div className="news-card-image">
-                          <img src={item.image} alt={item.title} loading="lazy" />
+                          <img src={item.featuredImage || item.image} alt={item.title} loading="lazy" />
                           <div className="news-category-badge">
                             <FaFolder /> {item.category}
                           </div>
@@ -503,13 +561,13 @@ function NewsList() {
                         <div className="news-card-content">
                           <div className="news-card-meta">
                             <span className="news-date">
-                              <FaCalendarAlt /> {item.date}
+                              <FaCalendarAlt /> {formatDate(item.createdAt) || item.date}
                             </span>
                             <span className="news-views">
-                              <FaEye /> {item.views}
+                              <FaEye /> {item.viewCount || item.views || 0}
                             </span>
                             <span className="news-reading-time">
-                              <FaClock /> {item.readingTime}
+                              <FaClock /> {item.readingTime || '5 menit'}
                             </span>
                           </div>
                           <h2>{item.title}</h2>
@@ -565,16 +623,16 @@ function NewsList() {
             <div className="sidebar-section">
               <h2>Berita Terbaru</h2>
               <div className="latest-news-list">
-                {newsItems.slice(0, 3).map(item => (
-                  <div key={item.id} className="latest-news-item">
-                    <Link to={`/berita/${item.slug}`} className="latest-news-link">
+                {Array.isArray(newsItems) && newsItems.slice(0, 3).map(item => (
+                  <div key={item._id || item.id} className="latest-news-item">
+                    <Link to={`/berita/${item.slug || item._id || item.id}`} className="latest-news-link">
                       <div className="latest-news-image">
-                        <img src={item.image} alt={item.title} loading="lazy" />
+                        <img src={item.featuredImage || item.image} alt={item.title} loading="lazy" />
                       </div>
                       <div className="latest-news-info">
                         <h3>{item.title}</h3>
                         <span className="latest-news-date">
-                          <FaCalendarAlt /> {item.date}
+                          <FaCalendarAlt /> {formatDate(item.createdAt) || item.date}
                         </span>
                       </div>
                     </Link>
