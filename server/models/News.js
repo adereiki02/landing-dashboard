@@ -6,6 +6,8 @@ const newsSchema = new mongoose.Schema(
       type: String,
       required: [true, 'News title is required'],
       trim: true,
+      minlength: [5, 'Title must be at least 5 characters long'],
+      maxlength: [200, 'Title cannot exceed 200 characters']
     },
     slug: {
       type: String,
@@ -17,6 +19,7 @@ const newsSchema = new mongoose.Schema(
     content: {
       type: String,
       required: [true, 'News content is required'],
+      minlength: [20, 'Content must be at least 20 characters long']
     },
     excerpt: {
       type: String,
@@ -25,16 +28,17 @@ const newsSchema = new mongoose.Schema(
     },
     featuredImage: {
       type: String,
-      required: [true, 'Featured image is required'],
+      default: '/uploads/default-news.jpg', // Default image jika tidak ada upload
     },
     category: {
       type: String,
       required: [true, 'Category is required'],
-      trim: true,
+      trim: true
     },
     tags: [{
       type: String,
       trim: true,
+      maxlength: 20
     }],
     author: {
       type: mongoose.Schema.Types.ObjectId,
@@ -59,6 +63,11 @@ const newsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Validasi khusus untuk tags
+newsSchema.path('tags').validate(function(tags) {
+  return tags.length <= 5; // Maksimal 5 tags
+}, 'Maximum 5 tags allowed');
 
 // Create a text index for search functionality
 newsSchema.index({ title: 'text', content: 'text', excerpt: 'text' });

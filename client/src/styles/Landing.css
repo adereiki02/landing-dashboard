@@ -122,6 +122,11 @@ ul {
   padding: 0.8rem 0;
 }
 
+.navbar-hidden {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
 .navbar-container {
   display: flex;
   justify-content: space-between;
@@ -704,19 +709,18 @@ ul {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #F3F4F6;
-  color: #4B5563;
+  background-color: var(--primary-color);
+  color: white;
   transition: var(--transition);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-size: 1.2rem;
   flex: 0 0 auto;
+  margin-right: 10px;
 }
 
 .social-link:hover {
-  background-color: var(--primary-color);
-  color: white;
   transform: translateY(-3px);
-  box-shadow: 0 5px 10px rgba(0, 102, 255, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 102, 255, 0.3);
 }
 
 .social-link.whatsapp:hover {

@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Helmet } from 'react-helmet';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import NewsDetail from './pages/DetailBerita/NewsDetail';
@@ -18,6 +19,8 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import './styles/Landing.css';
 import './styles/Dashboard.css';
 import './styles/Auth.css';
+import './styles/NewsDetail.css';
+import './styles/NewsList.css';
 
 // Set base URL for axios
 axios.defaults.baseURL = 'http://localhost:5000';
@@ -39,6 +42,14 @@ function App() {
 
   return (
     <Router>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#0D8ABC" />
+        <link rel="icon" href="/favicon.ico" />
+        <title>reikidevs - Digital Agency</title>
+        <meta name="description" content="reikidevs adalah digital agency yang menyediakan layanan pengembangan web, aplikasi mobile, dan solusi digital untuk bisnis Anda." />
+      </Helmet>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />

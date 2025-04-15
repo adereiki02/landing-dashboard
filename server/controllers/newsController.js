@@ -84,7 +84,14 @@ exports.getNewsBySlug = async (req, res) => {
 // Create news
 exports.createNews = async (req, res) => {
   try {
-    const { title, content, excerpt, featuredImage, category, tags, status } = req.body;
+    console.log('Create news request body:', req.body);
+    console.log('Create news request file:', req.file);
+    
+    const { title, content, category, tags, status, isHighlighted } = req.body;
+    
+    if (!title || !content || !category) {
+      return res.status(400).json({ message: 'Title, content, and category are required' });
+    }
     
     // Generate slug from title
     const slug = slugify(title, { lower: true, strict: true });
@@ -95,6 +102,23 @@ exports.createNews = async (req, res) => {
       return res.status(400).json({ message: 'A news with this title already exists' });
     }
     
+    // Generate excerpt automatically (first 300 characters)
+    const excerpt = content.length > 300 ? content.substring(0, 300) + '...' : content;
+    
+    // Handle featured image upload
+    const featuredImage = req.file ? `/uploads/news/${req.file.filename}` : '';
+    
+    // Parse tags if they're sent as JSON string
+    let parsedTags = [];
+    if (tags) {
+      try {
+        parsedTags = JSON.parse(tags);
+      } catch (e) {
+        console.error('Error parsing tags:', e);
+        parsedTags = tags.split(',').map(tag => tag.trim());
+      }
+    }
+    
     const news = new News({
       title,
       slug,
@@ -102,24 +126,42 @@ exports.createNews = async (req, res) => {
       excerpt,
       featuredImage,
       category,
-      tags: tags || [],
+      tags: parsedTags,
       author: req.user._id,
       status: status || 'draft',
+      isHighlighted: isHighlighted === 'true' || isHighlighted === true
     });
     
     await news.save();
     
-    res.status(201).json(news);
+    res.status(201).json({
+      message: 'News created successfully',
+      news: {
+        _id: news._id,
+        title: news.title,
+        slug: news.slug,
+        excerpt: news.excerpt,
+        featuredImage: news.featuredImage,
+        category: news.category,
+        status: news.status
+      }
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error creating news:', error);
+    res.status(500).json({ 
+      message: 'Error creating news', 
+      error: error.message 
+    });
   }
 };
 
 // Update news
 exports.updateNews = async (req, res) => {
   try {
-    const { title, content, excerpt, featuredImage, category, tags, status, isHighlighted } = req.body;
+    console.log('Update news request body:', req.body);
+    console.log('Update news request file:', req.file);
+    
+    const { title, content, category, tags, status, isHighlighted } = req.body;
     
     let news = await News.findById(req.params.id);
     
@@ -144,22 +186,42 @@ exports.updateNews = async (req, res) => {
       }
     }
     
+    // Generate excerpt automatically (first 300 characters)
+    const excerpt = content ? (content.length > 300 ? content.substring(0, 300) + '...' : content) : news.excerpt;
+    
+    // Handle featured image upload
+    const featuredImage = req.file ? `/uploads/news/${req.file.filename}` : news.featuredImage;
+    
+    // Parse tags if they're sent as JSON string
+    let parsedTags = news.tags;
+    if (tags) {
+      try {
+        parsedTags = JSON.parse(tags);
+      } catch (e) {
+        console.error('Error parsing tags:', e);
+        parsedTags = tags.split(',').map(tag => tag.trim());
+      }
+    }
+    
     news.title = title || news.title;
     news.slug = slug;
     news.content = content || news.content;
-    news.excerpt = excerpt || news.excerpt;
-    news.featuredImage = featuredImage || news.featuredImage;
+    news.excerpt = excerpt;
+    news.featuredImage = featuredImage;
     news.category = category || news.category;
-    news.tags = tags || news.tags;
+    news.tags = parsedTags;
     news.status = status || news.status;
-    news.isHighlighted = isHighlighted !== undefined ? isHighlighted : news.isHighlighted;
+    news.isHighlighted = isHighlighted === 'true' || isHighlighted === true;
     
     await news.save();
     
-    res.json(news);
+    res.json({
+      message: 'News updated successfully',
+      news
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error updating news:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
 
@@ -190,6 +252,12 @@ exports.deleteNews = async (req, res) => {
 exports.getNewsCategories = async (req, res) => {
   try {
     const categories = await News.distinct('category');
+    
+    // Add default categories if none exist
+    if (categories.length === 0) {
+      return res.json(['Teknologi', 'Bisnis', 'Olahraga', 'Hiburan', 'Politik', 'Lainnya']);
+    }
+    
     res.json(categories);
   } catch (error) {
     console.error(error);

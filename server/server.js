@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const connectDB = require('./config/db');
 const { createSuperAdmin } = require('./controllers/authController');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 // Initialize Express app
 const app = express();
@@ -37,10 +38,8 @@ app.get('/', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;

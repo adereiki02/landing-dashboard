@@ -1,0 +1,237 @@
+/* Enhanced Form Styles */
+.form-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(0, 102, 255, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 102, 255, 0.15);
+  font-size: 0.95rem;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.05);
+  transition: all 0.3s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(0, 102, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
+}
+
+.form-group input.error,
+.form-group textarea.error,
+.form-group select.error {
+  border-color: var(--danger-color);
+}
+
+.error-message {
+  color: var(--danger-color);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.form-hint {
+  color: var(--gray-color);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* Form Row */
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+/* File Upload */
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-upload {
+  padding: 0.75rem 1.25rem;
+  background-color: var(--light-accent);
+  color: var(--primary-color);
+  border: 1px solid rgba(0, 102, 255, 0.2);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-upload:hover {
+  background-color: rgba(0, 102, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.file-name {
+  color: var(--gray-color);
+  font-size: 0.9rem;
+}
+
+/* Image Preview */
+.image-preview {
+  margin-top: 1rem;
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.btn-remove-image {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: var(--danger-color);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-remove-image:hover {
+  background-color: white;
+  transform: scale(1.1);
+}
+
+/* Select with Button */
+.select-with-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 102, 255, 0.1);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(0, 102, 255, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}

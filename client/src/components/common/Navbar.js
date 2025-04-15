@@ -2,29 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logoImage from '../../assets/reikidevelop.png'; // Pastikan untuk menyimpan logo di folder assets
 
-function Navbar() {
+function Navbar({ visible = true }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+  const isNewsListPage = location.pathname === '/berita';
 
   useEffect(() => {
     // Check if user is logged in
     // const storedUserInfo = localStorage.getItem('userInfo');
     
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > 50) {
         setScrolled(true);
       } else {
         setScrolled(false);
       }
+      
+      // For NewsListPage, hide navbar when at top, show when scrolling down
+      if (isNewsListPage) {
+        if (currentScrollY <= 0) {
+          setShowNavbar(false);
+        } else {
+          setShowNavbar(true);
+        }
+      }
+      
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isNewsListPage, lastScrollY]);
   
   // Handle scrolling to section after navigation
   useEffect(() => {
@@ -71,7 +87,7 @@ function Navbar() {
   // const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+    <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${visible ? '' : 'navbar-hidden'} ${isNewsListPage && !showNavbar ? 'navbar-hidden' : ''}`}>
       <div className="navbar-container">
         <div className="navbar-logo" onClick={() => scrollToSection('home')} style={{cursor: 'pointer'}}>
           <img src={logoImage} alt="ReiKi Develop Logo" className="logo-image" />

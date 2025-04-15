@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaEye } from 'react-icons/fa';
 import '../../styles/Dashboard.css';
+import '../../styles/Modal.css';
 
 function NewsManagement() {
   const [news, setNews] = useState([]);
@@ -16,6 +18,8 @@ function NewsManagement() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categories, setCategories] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [newsToDelete, setNewsToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,16 +75,25 @@ function NewsManagement() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this news article?')) {
-      try {
-        await axios.delete(`/api/news/${id}`);
-        // Refresh news list
-        fetchNews();
-      } catch (error) {
-        console.error('Error deleting news:', error);
-        alert('Failed to delete news article');
-      }
+  const openDeleteModal = (news) => {
+    setNewsToDelete(news);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    if (!newsToDelete) return;
+    
+    try {
+      await axios.delete(`/api/news/${newsToDelete._id}`);
+      // Close modal
+      setShowDeleteModal(false);
+      setNewsToDelete(null);
+      // Refresh news list
+      fetchNews();
+    } catch (error) {
+      console.error('Error deleting news:', error);
+      alert('Failed to delete news article');
+      setShowDeleteModal(false);
     }
   };
 
@@ -183,7 +196,7 @@ function NewsManagement() {
                       <Link to={`/dashboard/news/edit/${item._id}`} className="btn-edit">
                         <FaEdit /> Edit
                       </Link>
-                      <button onClick={() => handleDelete(item._id)} className="btn-delete">
+                      <button onClick={() => openDeleteModal(item)} className="btn-delete">
                         <FaTrash /> Delete
                       </button>
                     </td>
@@ -226,6 +239,23 @@ function NewsManagement() {
           </button>
         </div>
       </div>
+      
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Konfirmasi Hapus Artikel"
+        message={
+          <>
+            <p>Apakah Anda yakin ingin menghapus artikel <strong>"{newsToDelete?.title}"</strong>?</p>
+            <p style={{ marginTop: '10px', fontSize: '0.9rem' }}>Tindakan ini tidak dapat dibatalkan dan semua data terkait artikel ini akan dihapus secara permanen.</p>
+          </>
+        }
+        confirmText="Hapus Artikel"
+        cancelText="Batal"
+        type="delete"
+      />
     </div>
   );
 }
