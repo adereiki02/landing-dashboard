@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
+import BackToTop from '../components/dashboard/BackToTop';
 import '../styles/Dashboard.css';
+import '../styles/BackToTop.css';
 import { FaUsers, FaNewspaper, FaBriefcase, FaHandshake, FaChartLine, FaExclamationTriangle } from 'react-icons/fa';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import axios from 'axios';
@@ -262,6 +264,7 @@ function Dashboard() {
           <Link to="/">← Back to Home</Link>
         </div>
       </div>
+      <BackToTop />
     </div>
   );
 }

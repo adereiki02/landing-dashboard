@@ -186,7 +186,7 @@ function NewsList() {
           {/* Main Content */}
           <div className="news-main-content">
             <div className="news-search-bar">
-              <form onSubmit={handleSearch} className="search-input-wrapper">
+              <form onSubmit={handleSearch}>
                 <input 
                   type="text" 
                   placeholder="Cari berita..." 

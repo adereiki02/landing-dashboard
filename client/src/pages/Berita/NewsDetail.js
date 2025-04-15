@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaWhatsapp, FaInstagram, FaYoutube, FaArrowUp } from 'react-icons/fa';
 import '../../styles/NewsDetail.css';
 
 // Menggunakan data berita yang sama dengan NewsList
@@ -142,6 +143,7 @@ function NewsDetail() {
   const [news, setNews] = useState(null);
   const [relatedNews, setRelatedNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   
   useEffect(() => {
     // Scroll to top when component mounts
@@ -164,7 +166,31 @@ function NewsDetail() {
     }
     
     setLoading(false);
+    
+    // Add scroll event listener for back to top button
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // Clean up event listener
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [id]);
+  
+  // Function to scroll back to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
   
   if (loading) {
     return (
@@ -249,16 +275,16 @@ function NewsDetail() {
                 <h3>Bagikan:</h3>
                 <div className="share-buttons">
                   <a href={`https://www.facebook.com/sharer/sharer.php?u=https://reikidevs.com/berita/${news.id}`} target="_blank" rel="noopener noreferrer" className="share-button facebook">
-                    <i className="fab fa-facebook-f"></i> Facebook
+                    <FaFacebookF /> Facebook
                   </a>
                   <a href={`https://twitter.com/intent/tweet?url=https://reikidevs.com/berita/${news.id}&text=${news.title}`} target="_blank" rel="noopener noreferrer" className="share-button twitter">
-                    <i className="fab fa-twitter"></i> Twitter
+                    <FaTwitter /> Twitter
                   </a>
                   <a href={`https://www.linkedin.com/shareArticle?mini=true&url=https://reikidevs.com/berita/${news.id}&title=${news.title}&summary=${news.excerpt}`} target="_blank" rel="noopener noreferrer" className="share-button linkedin">
-                    <i className="fab fa-linkedin-in"></i> LinkedIn
+                    <FaLinkedinIn /> LinkedIn
                   </a>
                   <a href={`https://wa.me/?text=${news.title} https://reikidevs.com/berita/${news.id}`} target="_blank" rel="noopener noreferrer" className="share-button whatsapp">
-                    <i className="fab fa-whatsapp"></i> WhatsApp
+                    <FaWhatsapp /> WhatsApp
                   </a>
                 </div>
               </div>
@@ -326,6 +352,21 @@ function NewsDetail() {
           
           {/* Sidebar */}
           <aside className="news-detail-sidebar">
+            {/* Search widget */}
+            <div className="sidebar-widget search-widget">
+              <h3>Pencarian</h3>
+              <form className="search-form">
+                <div className="search-input-container">
+                  <input type="text" placeholder="Cari artikel..." className="search-input" />
+                  <button type="submit" className="search-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+            
             {/* Author widget */}
             <div className="sidebar-widget author-widget">
               <h3>Tentang Penulis</h3>
@@ -336,9 +377,10 @@ function NewsDetail() {
                 <div className="author-name">{news.author}</div>
                 <p>Penulis di reikidevs dengan pengalaman dalam bidang teknologi dan pengembangan web.</p>
                 <div className="author-social">
-                  <a href="#" className="author-social-link"><i className="fab fa-twitter"></i></a>
-                  <a href="#" className="author-social-link"><i className="fab fa-linkedin-in"></i></a>
-                  <a href="#" className="author-social-link"><i className="fab fa-facebook-f"></i></a>
+                  <a href="#" className="author-social-link"><FaFacebookF /></a>
+                  <a href="#" className="author-social-link"><FaTwitter /></a>
+                  <a href="#" className="author-social-link"><FaLinkedinIn /></a>
+                  <a href="#" className="author-social-link"><FaInstagram /></a>
                 </div>
               </div>
             </div>
@@ -403,6 +445,37 @@ function NewsDetail() {
               </ul>
             </div>
             
+            {/* Social Media Follow Widget */}
+            <div className="sidebar-widget social-follow-widget">
+              <h3>Ikuti Kami</h3>
+              <div className="social-follow-grid">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-follow-item facebook">
+                  <FaFacebookF />
+                  <span>Facebook</span>
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-follow-item twitter">
+                  <FaTwitter />
+                  <span>Twitter</span>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-follow-item instagram">
+                  <FaInstagram />
+                  <span>Instagram</span>
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-follow-item linkedin">
+                  <FaLinkedinIn />
+                  <span>LinkedIn</span>
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-follow-item youtube">
+                  <FaYoutube />
+                  <span>YouTube</span>
+                </a>
+                <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="social-follow-item whatsapp">
+                  <FaWhatsapp />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </div>
+            
             {/* Newsletter widget */}
             <div className="sidebar-widget newsletter-widget">
               <h3>Berlangganan Newsletter</h3>
@@ -426,6 +499,15 @@ function NewsDetail() {
       </div>
       
       <Footer />
+      
+      {/* Back to Top Button */}
+      <button 
+        className={`back-to-top-btn ${showBackToTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Kembali ke atas"
+      >
+        <FaArrowUp />
+      </button>
     </div>
   );
 }

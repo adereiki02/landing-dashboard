@@ -193,6 +193,7 @@ function NewsDetail() {
   const [viewCount, setViewCount] = useState(0);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -200,33 +201,45 @@ function NewsDetail() {
     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
-  // Handle scroll to control navbar visibility
-  const controlNavbar = () => {
-    if (typeof window !== 'undefined') {
-      const currentScrollY = window.scrollY;
-      
-      // Show navbar when scrolling up or at the top
-      if (currentScrollY < lastScrollY || currentScrollY < 100) {
-        setShowNavbar(true);
-      } 
-      // Hide navbar when scrolling down and not at the top
-      else if (currentScrollY > 100 && currentScrollY > lastScrollY) {
-        setShowNavbar(false);
-      }
-      
-      // Update the last scroll position
-      setLastScrollY(currentScrollY);
-    }
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   // Add scroll event listener
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', controlNavbar);
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY;
+        
+        // Show navbar when scrolling up or at the top
+        if (currentScrollY < lastScrollY || currentScrollY < 100) {
+          setShowNavbar(true);
+        } 
+        // Hide navbar when scrolling down and not at the top
+        else if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+          setShowNavbar(false);
+        }
+        
+        // Show/hide back to top button
+        if (currentScrollY > 300) {
+          setShowBackToTop(true);
+        } else {
+          setShowBackToTop(false);
+        }
+        
+        // Update the last scroll position
+        setLastScrollY(currentScrollY);
+      };
+      
+      window.addEventListener('scroll', handleScroll);
       
       // Cleanup the event listener
       return () => {
-        window.removeEventListener('scroll', controlNavbar);
+        window.removeEventListener('scroll', handleScroll);
       };
     }
   }, [lastScrollY]);
@@ -564,6 +577,17 @@ function NewsDetail() {
       </div>
       
       <Footer />
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button 
+          className="back-to-top-btn" 
+          onClick={scrollToTop}
+          aria-label="Kembali ke atas"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }
