@@ -5,6 +5,8 @@ import { Helmet } from 'react-helmet';
 import { FaCalendarAlt, FaUser, FaFolder, FaClock, FaFacebookF, FaTwitter, FaLinkedinIn, FaWhatsapp, FaEye, FaTag } from 'react-icons/fa';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
+import BackToTop from '../../components/common/BackToTop';
+import '../../styles/BackToTop.css';
 import '../../styles/NewsDetail.css';
 
 // Data dummy berita - fallback if API fails
@@ -576,6 +578,7 @@ function NewsDetail() {
         </div>
       </div>
       
+      <BackToTop />
       <Footer />
 
       {/* Back to Top Button */}
