@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Link, Helmet } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import BackToTop from '../../components/common/BackToTop';
 import '../../styles/NewsList.css';
 import '../../styles/BackToTop.css';
-import { FaCalendarAlt, FaEye, FaClock, FaSearch, FaTags, FaFolder, FaChevronRight, FaFilter, FaTimes, FaArrowUp } from 'react-icons/fa';
+import { FaCalendarAlt, FaEye, FaClock, FaSearch, FaTags, FaFolder } from 'react-icons/fa';
 
 // Menggunakan data berita yang sama dengan NewsDetail
 const newsItems = [
@@ -112,8 +111,6 @@ function NewsList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(4);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   // SEO-related metadata
   const pageTitle = "Blog reikidevs - Berita Terbaru dan Insight Teknologi";
@@ -124,66 +121,50 @@ function NewsList() {
   }, []);
 
   useEffect(() => {
-    // Simulate loading state for better UX
-    setIsLoading(true);
+    let result = newsItems;
     
-    const timer = setTimeout(() => {
-      let result = newsItems;
-      
-      // Filter berdasarkan kategori
-      if (activeCategory !== 'Semua') {
-        result = result.filter(item => item.category === activeCategory);
-      }
-      
-      // Filter berdasarkan arsip (bulan & tahun)
-      if (activeArchive) {
-        result = result.filter(item => getMonthYear(item.date) === activeArchive);
-      }
-      
-      // Filter berdasarkan tag
-      if (activeTags.length > 0) {
-        result = result.filter(item => 
-          activeTags.some(tag => item.tags && item.tags.includes(tag))
-        );
-      }
-      
-      // Filter berdasarkan pencarian
-      if (searchTerm) {
-        const term = searchTerm.toLowerCase();
-        result = result.filter(item => 
-          item.title.toLowerCase().includes(term) || 
-          item.excerpt.toLowerCase().includes(term) ||
-          (item.tags && item.tags.some(tag => tag.toLowerCase().includes(term)))
-        );
-      }
-      
-      setFilteredNews(result);
-      setCurrentPage(1); // Reset to first page when filters change
-      setIsLoading(false);
-    }, 400); // Small delay to show loading state
+    // Filter berdasarkan kategori
+    if (activeCategory !== 'Semua') {
+      result = result.filter(item => item.category === activeCategory);
+    }
     
-    return () => clearTimeout(timer);
+    // Filter berdasarkan arsip (bulan & tahun)
+    if (activeArchive) {
+      result = result.filter(item => getMonthYear(item.date) === activeArchive);
+    }
+    
+    // Filter berdasarkan tag
+    if (activeTags.length > 0) {
+      result = result.filter(item => 
+        activeTags.some(tag => item.tags && item.tags.includes(tag))
+      );
+    }
+    
+    // Filter berdasarkan pencarian
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(item => 
+        item.title.toLowerCase().includes(term) || 
+        item.excerpt.toLowerCase().includes(term) ||
+        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(term)))
+      );
+    }
+    
+    setFilteredNews(result);
+    setCurrentPage(1); // Reset to first page when filters change
   }, [activeCategory, activeArchive, activeTags, searchTerm]);
 
   const handleCategoryClick = (category) => {
-    setIsLoading(true);
     setActiveCategory(category);
-    if (category !== 'Semua') {
-      setActiveArchive('');
-    }
-    // Close mobile filters if open
-    setShowMobileFilters(false);
+    setActiveArchive('');
   };
 
   const handleArchiveClick = (archive) => {
-    setIsLoading(true);
-    setActiveArchive(archive === activeArchive ? '' : archive);
-    // Close mobile filters if open
-    setShowMobileFilters(false);
+    setActiveArchive(archive);
+    setActiveCategory('Semua');
   };
   
   const handleTagClick = (tag) => {
-    setIsLoading(true);
     setActiveTags(prev => {
       if (prev.includes(tag)) {
         return prev.filter(t => t !== tag);
@@ -191,30 +172,18 @@ function NewsList() {
         return [...prev, tag];
       }
     });
-    // Close mobile filters if open
-    setShowMobileFilters(false);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setIsLoading(true);
     // Search is already handled by the useEffect
-    // Close mobile filters if open
-    setShowMobileFilters(false);
   };
   
   const handleClearFilters = () => {
-    setIsLoading(true);
     setActiveCategory('Semua');
     setActiveArchive('');
     setActiveTags([]);
     setSearchTerm('');
-    // Close mobile filters if open
-    setShowMobileFilters(false);
-  };
-  
-  const toggleMobileFilters = () => {
-    setShowMobileFilters(prev => !prev);
   };
   
   // Pagination logic
@@ -223,11 +192,7 @@ function NewsList() {
   const currentItems = filteredNews.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
   
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // Scroll to top of results
-    document.querySelector('.news-content').scrollIntoView({ behavior: 'smooth' });
-  };
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   
   // Generate pagination items
   const paginationItems = [];
@@ -342,62 +307,7 @@ function NewsList() {
           </ol>
         </nav>
         
-        {/* Active filters display */}
-        {(activeCategory !== 'Semua' || activeArchive || activeTags.length > 0 || searchTerm) && (
-          <div className="active-filters">
-            <span className="active-filters-label">Filter Aktif:</span>
-            <div className="active-filters-list">
-              {activeCategory !== 'Semua' && (
-                <div className="active-filter-item">
-                  <span>Kategori: {activeCategory}</span>
-                  <button onClick={() => handleCategoryClick('Semua')} aria-label={`Hapus filter kategori ${activeCategory}`}>
-                    <FaTimes />
-                  </button>
-                </div>
-              )}
-              {activeArchive && (
-                <div className="active-filter-item">
-                  <span>Arsip: {activeArchive}</span>
-                  <button onClick={() => handleArchiveClick(activeArchive)} aria-label={`Hapus filter arsip ${activeArchive}`}>
-                    <FaTimes />
-                  </button>
-                </div>
-              )}
-              {activeTags.map(tag => (
-                <div key={tag} className="active-filter-item">
-                  <span>Tag: {tag}</span>
-                  <button onClick={() => handleTagClick(tag)} aria-label={`Hapus filter tag ${tag}`}>
-                    <FaTimes />
-                  </button>
-                </div>
-              ))}
-              {searchTerm && (
-                <div className="active-filter-item">
-                  <span>Pencarian: {searchTerm}</span>
-                  <button onClick={() => setSearchTerm('')} aria-label={`Hapus pencarian ${searchTerm}`}>
-                    <FaTimes />
-                  </button>
-                </div>
-              )}
-            </div>
-            <button className="reset-all-filters" onClick={handleClearFilters} aria-label="Hapus semua filter">
-              <FaTimes /> Hapus Semua
-            </button>
-          </div>
-        )}
-        
-        {/* Mobile filter toggle */}
-        <button className="mobile-filter-toggle" onClick={toggleMobileFilters} aria-expanded={showMobileFilters}>
-          <FaFilter /> Filter
-          <span className="filter-count">
-            {(activeCategory !== 'Semua' ? 1 : 0) + 
-             (activeArchive ? 1 : 0) + 
-             activeTags.length + 
-             (searchTerm ? 1 : 0)}
-          </span>
-        </button>
-        
-        <div className={`news-list-main ${showMobileFilters ? 'show-mobile-filters' : ''}`}>
+        <div className="news-list-main">
           {/* Left Sidebar */}
           <div className="news-sidebar-left">
             <div className="sidebar-section">
@@ -410,111 +320,82 @@ function NewsList() {
                     aria-pressed={activeCategory === 'Semua'}
                   >
                     <FaFolder /> Semua
-                    <span className="category-count">{newsItems.length}</span>
                   </button>
                 </li>
-                {categories.map(category => {
-                  const count = newsItems.filter(item => item.category === category).length;
-                  return (
-                    <li key={category}>
-                      <button 
-                        className={activeCategory === category ? 'active' : ''}
-                        onClick={() => handleCategoryClick(category)}
-                        aria-pressed={activeCategory === category}
-                      >
-                        <FaFolder /> {category}
-                        <span className="category-count">{count}</span>
-                      </button>
-                    </li>
-                  );
-                })}
+                {categories.map(category => (
+                  <li key={category}>
+                    <button 
+                      className={activeCategory === category ? 'active' : ''}
+                      onClick={() => handleCategoryClick(category)}
+                      aria-pressed={activeCategory === category}
+                    >
+                      <FaFolder /> {category}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
             
             <div className="sidebar-section">
               <h2>Arsip</h2>
               <ul className="archive-list">
-                {archives.map(archive => {
-                  const count = newsItems.filter(item => getMonthYear(item.date) === archive).length;
-                  return (
-                    <li key={archive}>
-                      <button 
-                        className={activeArchive === archive ? 'active' : ''}
-                        onClick={() => handleArchiveClick(archive)}
-                        aria-pressed={activeArchive === archive}
-                      >
-                        <FaCalendarAlt /> {archive}
-                        <span className="archive-count">{count}</span>
-                      </button>
-                    </li>
-                  );
-                })}
+                {archives.map(archive => (
+                  <li key={archive}>
+                    <button 
+                      className={activeArchive === archive ? 'active' : ''}
+                      onClick={() => handleArchiveClick(archive)}
+                      aria-pressed={activeArchive === archive}
+                    >
+                      <FaCalendarAlt /> {archive}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
             
             <div className="sidebar-section">
               <h2>Tag</h2>
               <div className="tag-cloud">
-                {allTags.map(tag => {
-                  const count = newsItems.filter(item => item.tags && item.tags.includes(tag)).length;
-                  return (
-                    <button 
-                      key={tag}
-                      className={`tag-button ${activeTags.includes(tag) ? 'active' : ''}`}
-                      onClick={() => handleTagClick(tag)}
-                      aria-pressed={activeTags.includes(tag)}
-                    >
-                      <FaTags /> {tag} ({count})
-                    </button>
-                  );
-                })}
+                {allTags.map(tag => (
+                  <button 
+                    key={tag}
+                    className={activeTags.includes(tag) ? 'active' : ''}
+                    onClick={() => handleTagClick(tag)}
+                    aria-pressed={activeTags.includes(tag)}
+                  >
+                    <FaTags /> {tag}
+                  </button>
+                ))}
               </div>
             </div>
-            
-            {/* Mobile filter close button */}
-            <button className="mobile-filter-close" onClick={toggleMobileFilters}>
-              <FaTimes /> Tutup Filter
-            </button>
           </div>
           
           {/* Main Content */}
           <div className="news-content">
-            {isLoading ? (
-              <div className="loading-state">
-                <div className="loading-spinner"></div>
-                <p>Memuat artikel...</p>
-              </div>
-            ) : filteredNews.length > 0 ? (
+            {filteredNews.length > 0 ? (
               <>
-                <div className="news-results-info">
-                  <span>Menampilkan {filteredNews.length} artikel</span>
-                </div>
-                
                 <div className="news-grid">
                   {currentItems.map(item => (
                     <div key={item.id} className="news-card">
                       <Link to={`/berita/${item.slug}`} className="news-card-link">
                         <div className="news-card-image">
-                          <img src={item.image} alt={item.title} loading="lazy" />
-                          <div className="news-category-badge">
-                            <FaFolder /> {item.category}
-                          </div>
+                          <img src={item.image} alt={item.title} />
                         </div>
+                        <div className="news-card-category">{item.category}</div>
                         <div className="news-card-content">
+                          <h2>{item.title}</h2>
+                          <p>{item.excerpt}</p>
                           <div className="news-card-meta">
-                            <span className="news-date">
+                            <span className="news-card-date">
                               <FaCalendarAlt /> {item.date}
                             </span>
-                            <span className="news-views">
-                              <FaEye /> {item.views}
+                            <span className="news-card-views">
+                              <FaEye /> {item.views} views
                             </span>
-                            <span className="news-reading-time">
+                            <span className="news-card-time">
                               <FaClock /> {item.readingTime}
                             </span>
                           </div>
-                          <h2>{item.title}</h2>
-                          <p className="news-excerpt">{item.excerpt}</p>
-                          <span className="read-more">Baca selengkapnya</span>
                         </div>
                       </Link>
                     </div>
@@ -522,8 +403,8 @@ function NewsList() {
                 </div>
                 
                 {totalPages > 1 && (
-                  <nav className="pagination" aria-label="Pagination">
-                    <ul>
+                  <nav className="pagination-container" aria-label="Pagination">
+                    <ul className="pagination">
                       <li>
                         <button 
                           onClick={() => paginate(currentPage - 1)} 
@@ -569,7 +450,7 @@ function NewsList() {
                   <div key={item.id} className="latest-news-item">
                     <Link to={`/berita/${item.slug}`} className="latest-news-link">
                       <div className="latest-news-image">
-                        <img src={item.image} alt={item.title} loading="lazy" />
+                        <img src={item.image} alt={item.title} />
                       </div>
                       <div className="latest-news-info">
                         <h3>{item.title}</h3>
@@ -618,9 +499,6 @@ function NewsList() {
       
       <Footer />
       <BackToTop />
-      
-      {/* Mobile filter overlay */}
-      <div className={`mobile-filter-overlay ${showMobileFilters ? 'active' : ''}`} onClick={toggleMobileFilters}></div>
     </div>
   );
 }
