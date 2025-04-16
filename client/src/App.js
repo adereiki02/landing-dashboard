@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Helmet } from 'react-helmet';
+import './utils/axiosConfig'; // Import axios configuration
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import NewsDetail from './pages/DetailBerita/NewsDetail';
@@ -22,8 +22,7 @@ import './styles/Auth.css';
 import './styles/NewsDetail.css';
 import './styles/NewsList.css';
 
-// Set base URL for axios
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://your-runway-backend-url.com';
+
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -34,9 +33,6 @@ function App() {
     if (storedUserInfo) {
       const parsedUserInfo = JSON.parse(storedUserInfo);
       setUserInfo(parsedUserInfo);
-      
-      // Set auth token for all requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUserInfo.token}`;
     }
   }, []);
 
