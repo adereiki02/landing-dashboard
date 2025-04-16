@@ -6,12 +6,18 @@
   "scripts": {
     "client": "cd client && npm start",
     "server": "cd server && npm run dev",
+    "server:prod": "cd server && npm run prod",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "prod": "cd server && npm run prod",
+    "sync-db": "cd server && npm run sync-db",
     "install-all": "npm install && cd client && npm install && cd ../server && npm install"
   },
   "dependencies": {
     "@vercel/speed-insights": "^1.2.0",
     "concurrently": "^8.2.0",
     "multer": "^1.4.5-lts.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

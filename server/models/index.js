@@ -1,3 +1,5 @@
+// Import all models
+const mongoose = require('mongoose');
 const User = require('./User');
 const News = require('./News');
 const Partner = require('./Partner');
@@ -10,6 +12,7 @@ const Client = require('./Client');
 const Faq = require('./Faq');
 const Contact = require('./Contact');
 
+// Export models with their schemas
 module.exports = {
   User,
   News,

@@ -1,19 +1,29 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 require('dotenv').config();
 const connectDB = require('./config/db');
 const { createSuperAdmin } = require('./controllers/authController');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
+
 // Initialize Express app
 const app = express();
 
 // Connect to MongoDB
-connectDB();
+connectDB().catch(err => {
+  console.error('Failed to connect to MongoDB', err);
+});
 
-// Create superadmin user if not exists
-createSuperAdmin();
+// Only create superadmin if DB connection is successful
+mongoose.connection.once('connected', () => {
+  try {
+    createSuperAdmin();
+  } catch (error) {
+    console.error('Error creating superadmin:', error);
+  }
+});
 
 // Middleware
 app.use(cors());
@@ -32,6 +42,12 @@ const apiRoutes = require('./routes/api');
 // Use routes
 app.use('/api', apiRoutes);
 
+// Make sure Swagger documentation is accessible
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(require('./routes/api').swaggerSpec);
+});
+
 // Basic route for testing
 app.get('/', (req, res) => {
   res.send('API is running...');
@@ -43,6 +59,13 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.log(`Error: ${err.message}`);
+  // Close server & exit process
+  server.close(() => process.exit(1));
 });
