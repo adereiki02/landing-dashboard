@@ -23,7 +23,7 @@ import './styles/NewsDetail.css';
 import './styles/NewsList.css';
 
 // Set base URL for axios
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://your-runway-backend-url.com';
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
