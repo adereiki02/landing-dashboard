@@ -628,7 +628,7 @@ function NewsList() {
                   <div key={item._id || item.id} className="latest-news-item">
                     <Link to={`/berita/${item.slug || item._id || item.id}`} className="latest-news-link">
                       <div className="latest-news-image">
-                        <img src={item.featuredImage || item.image} alt={item.title} loading="lazy" />
+                        <img src={getImageUrl(item.featuredImage || item.image, 'news')} alt={item.title} loading="lazy" />
                       </div>
                       <div className="latest-news-info">
                         <h3>{item.title}</h3>

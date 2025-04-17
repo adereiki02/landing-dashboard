@@ -114,7 +114,7 @@ function NewsCarousel() {
               {newsItems.map((news) => (
                 <div className="news-card" key={news._id}>
                   <div className="news-image">
-                    <img src={getImageUrl(news.featuredImage, 'news')} alt={news.title} />
+                    <img src={getImageUrl(news.featuredImage || news.image, 'news')} alt={news.title} />
                     <div className="news-category">{news.category}</div>
                   </div>
                   <div className="news-content">

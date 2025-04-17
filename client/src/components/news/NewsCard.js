@@ -19,23 +19,23 @@ const NewsCard = ({ item }) => {
     
     // Backend URL
     const backendUrl = 'https://reikidevs-official-production.up.railway.app';
-    const frontendUrl = 'https://reikidevs-official.vercel.app';
     
-    // If the image URL is from the frontend, replace with backend URL
-    if (imagePath.startsWith(frontendUrl)) {
-      return imagePath.replace(frontendUrl, backendUrl);
-    }
-    
-    // If it's already a full URL but not from our domains, return it as is
+    // If the image URL is already a full URL
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      // Check if it's not from our domains but has the correct path structure
+      // If it's already from our backend, return it as is
+      if (imagePath.startsWith(backendUrl)) {
+        return imagePath;
+      }
+      
+      // If it's from another domain but has our path structure, fix it
       if (imagePath.includes('/uploads/news/')) {
-        // Extract just the filename
         const parts = imagePath.split('/uploads/news/');
         if (parts.length > 1) {
           return `${backendUrl}/uploads/news/${parts[1]}`;
         }
       }
+      
+      // If it's a completely external URL, return it as is
       return imagePath;
     }
     
