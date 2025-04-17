@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
 import axios from 'axios';
+import { getImageUrl } from '../../utils/imageUtils';
 
 function NewsCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -113,7 +114,7 @@ function NewsCarousel() {
               {newsItems.map((news) => (
                 <div className="news-card" key={news._id}>
                   <div className="news-image">
-                    <img src={news.featuredImage} alt={news.title} />
+                    <img src={getImageUrl(news.featuredImage, 'news')} alt={news.title} />
                     <div className="news-category">{news.category}</div>
                   </div>
                   <div className="news-content">

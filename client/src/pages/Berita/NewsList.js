@@ -8,6 +8,7 @@ import BackToTop from '../../components/common/BackToTop';
 import '../../styles/NewsList.css';
 import '../../styles/BackToTop.css';
 import { FaCalendarAlt, FaEye, FaClock, FaSearch, FaTags, FaFolder, FaChevronRight, FaFilter, FaTimes, FaArrowUp, FaExclamationTriangle } from 'react-icons/fa';
+import { getImageUrl } from '../../utils/imageUtils';
 
 // Fungsi untuk memformat tanggal dari format ISO ke format yang lebih mudah dibaca
 const formatDate = (isoDate) => {
@@ -553,7 +554,7 @@ function NewsList() {
                     <div key={item._id || item.id} className="news-card">
                       <Link to={`/berita/${item.slug || item._id || item.id}`} className="news-card-link">
                         <div className="news-card-image">
-                          <img src={item.featuredImage || item.image} alt={item.title} loading="lazy" />
+                          <img src={getImageUrl(item.featuredImage || item.image, 'news')} alt={item.title} loading="lazy" />
                           <div className="news-category-badge">
                             <FaFolder /> {item.category}
                           </div>
