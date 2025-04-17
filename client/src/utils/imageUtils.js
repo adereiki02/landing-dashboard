@@ -16,6 +16,16 @@ export const getImageUrl = (imagePath, type = 'news') => {
     return imagePath;
   }
   
+  // Check if imagePath already includes the uploads path
+  const hasUploadsPath = imagePath.startsWith('uploads/') || imagePath.startsWith('/uploads/');
+  
+  // If imagePath already has the full path structure, just add the base API URL
+  if (hasUploadsPath) {
+    // Normalize path by removing leading slash if present
+    const normalizedPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+    return `${process.env.REACT_APP_API_URL}/${normalizedPath}`;
+  }
+  
   // Use absolute URL if flag is enabled in environment variables
   const useAbsoluteUrls = process.env.REACT_APP_USE_ABSOLUTE_MEDIA_URLS === 'true';
   
