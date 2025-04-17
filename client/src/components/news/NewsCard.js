@@ -18,7 +18,7 @@ const NewsCard = ({ item }) => {
       <Link to={`/berita/${item.slug || item.id}`} className="news-card-link">
         <div className="news-card-image">
           <img 
-            src={getImageUrl(item.featuredImage || item.image)} 
+            src={getImageUrl(item.featuredImage || item.image, 'news')} 
             alt={item.title} 
             loading="lazy" 
             width="800" 
