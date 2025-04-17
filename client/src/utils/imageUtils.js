@@ -16,6 +16,9 @@ export const getImageUrl = (imagePath, type = 'news') => {
     return imagePath;
   }
   
+  // Ensure API URL doesn't end with a slash
+  const apiUrl = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/$/, '') : '';
+  
   // Check if imagePath already includes the uploads path
   const hasUploadsPath = imagePath.startsWith('uploads/') || imagePath.startsWith('/uploads/');
   
@@ -23,34 +26,57 @@ export const getImageUrl = (imagePath, type = 'news') => {
   if (hasUploadsPath) {
     // Normalize path by removing leading slash if present
     const normalizedPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
-    return `${process.env.REACT_APP_API_URL}/${normalizedPath}`;
+    return `${apiUrl}/${normalizedPath}`;
   }
   
   // Use absolute URL if flag is enabled in environment variables
   const useAbsoluteUrls = process.env.REACT_APP_USE_ABSOLUTE_MEDIA_URLS === 'true';
   
-  // Select the appropriate base URL based on image type
-  let baseUrl;
-  switch (type) {
-    case 'news':
-      baseUrl = useAbsoluteUrls ? process.env.REACT_APP_NEWS_IMAGES_URL : '/uploads/news';
-      break;
-    case 'portfolio':
-      baseUrl = useAbsoluteUrls ? process.env.REACT_APP_PORTFOLIO_IMAGES_URL : '/uploads/portfolio';
-      break;
-    case 'testimonial':
-      baseUrl = useAbsoluteUrls ? process.env.REACT_APP_TESTIMONIAL_IMAGES_URL : '/uploads/testimonials';
-      break;
-    case 'partner':
-      baseUrl = useAbsoluteUrls ? process.env.REACT_APP_PARTNER_IMAGES_URL : '/uploads/partners';
-      break;
-    case 'profile':
-      baseUrl = useAbsoluteUrls ? process.env.REACT_APP_PROFILE_IMAGES_URL : '/uploads/profiles';
-      break;
-    default:
-      baseUrl = useAbsoluteUrls ? process.env.REACT_APP_DEFAULT_IMAGES_URL : '/uploads';
+  // If using absolute URLs, construct with API URL
+  if (useAbsoluteUrls) {
+    let path;
+    switch (type) {
+      case 'news':
+        path = 'uploads/news';
+        break;
+      case 'portfolio':
+        path = 'uploads/portfolio';
+        break;
+      case 'testimonial':
+        path = 'uploads/testimonials';
+        break;
+      case 'partner':
+        path = 'uploads/partners';
+        break;
+      case 'profile':
+        path = 'uploads/profiles';
+        break;
+      default:
+        path = 'uploads';
+    }
+    return `${apiUrl}/${path}/${imagePath}`;
+  } else {
+    // For local development, use relative paths
+    let baseUrl;
+    switch (type) {
+      case 'news':
+        baseUrl = '/uploads/news';
+        break;
+      case 'portfolio':
+        baseUrl = '/uploads/portfolio';
+        break;
+      case 'testimonial':
+        baseUrl = '/uploads/testimonials';
+        break;
+      case 'partner':
+        baseUrl = '/uploads/partners';
+        break;
+      case 'profile':
+        baseUrl = '/uploads/profiles';
+        break;
+      default:
+        baseUrl = '/uploads';
+    }
+    return `${baseUrl}/${imagePath}`;
   }
-  
-  // Construct the URL with the appropriate base
-  return `${baseUrl}/${imagePath}`;
 };
