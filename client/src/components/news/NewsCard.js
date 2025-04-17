@@ -17,16 +17,30 @@ const NewsCard = ({ item }) => {
   const getFullImageUrl = (imagePath) => {
     if (!imagePath) return '';
     
-    // If the image is already a full URL, return it as is
+    // Backend URL
+    const backendUrl = 'https://reikidevs-official-production.up.railway.app';
+    const frontendUrl = 'https://reikidevs-official.vercel.app';
+    
+    // If the image URL is from the frontend, replace with backend URL
+    if (imagePath.startsWith(frontendUrl)) {
+      return imagePath.replace(frontendUrl, backendUrl);
+    }
+    
+    // If it's already a full URL but not from our domains, return it as is
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      // Check if it's not from our domains but has the correct path structure
+      if (imagePath.includes('/uploads/news/')) {
+        // Extract just the filename
+        const parts = imagePath.split('/uploads/news/');
+        if (parts.length > 1) {
+          return `${backendUrl}/uploads/news/${parts[1]}`;
+        }
+      }
       return imagePath;
     }
     
     // Check if imagePath already includes the uploads path
     const hasUploadsPath = imagePath.startsWith('uploads/') || imagePath.startsWith('/uploads/');
-    
-    // Backend URL
-    const backendUrl = 'https://reikidevs-official-production.up.railway.app';
     
     if (hasUploadsPath) {
       // Normalize path by removing leading slash if present
