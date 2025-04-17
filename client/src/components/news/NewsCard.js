@@ -13,12 +13,37 @@ const NewsCard = ({ item }) => {
   
   const readingTime = calculateReadingTime(item.excerpt);
   
+  // Custom function to ensure image URL has the backend domain
+  const getFullImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    
+    // If the image is already a full URL, return it as is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    
+    // Check if imagePath already includes the uploads path
+    const hasUploadsPath = imagePath.startsWith('uploads/') || imagePath.startsWith('/uploads/');
+    
+    // Backend URL
+    const backendUrl = 'https://reikidevs-official-production.up.railway.app';
+    
+    if (hasUploadsPath) {
+      // Normalize path by removing leading slash if present
+      const normalizedPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+      return `${backendUrl}/${normalizedPath}`;
+    } else {
+      // Assume it's a news image
+      return `${backendUrl}/uploads/news/${imagePath}`;
+    }
+  };
+  
   return (
     <article className="news-card" role="listitem">
       <Link to={`/berita/${item.slug || item.id}`} className="news-card-link">
         <div className="news-card-image">
           <img 
-            src={getImageUrl(item.featuredImage || item.image, 'news')} 
+            src={getFullImageUrl(item.featuredImage || item.image)} 
             alt={item.title} 
             loading="lazy" 
             width="800" 
