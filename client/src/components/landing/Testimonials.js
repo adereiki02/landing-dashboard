@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../../utils/imageUtils';
 
 function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -53,7 +54,7 @@ function Testimonials() {
                   <p>"{testimonial.text}"</p>
                 </div>
                 <div className="testimonial-author">
-                  <img src={testimonial.image} alt={testimonial.name} />
+                  <img src={getImageUrl(testimonial.image, 'testimonial')} alt={testimonial.name} />
                   <div className="author-info">
                     <h4>{testimonial.name}</h4>
                     <p>{testimonial.role}</p>

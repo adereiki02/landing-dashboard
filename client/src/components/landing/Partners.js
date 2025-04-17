@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getImageUrl } from '../../utils/imageUtils';
 import '../../styles/Partners.css';
 
 function Partners() {
@@ -74,7 +75,7 @@ function Partners() {
           {partners.map(partner => (
             <div className="partner-item" key={partner._id}>
               <img 
-                src={partner.logo} 
+                src={getImageUrl(partner.logo, 'partner')} 
                 alt={partner.name} 
                 className="partner-logo" 
               />

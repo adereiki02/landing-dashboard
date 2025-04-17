@@ -6,6 +6,7 @@ import { FaCalendarAlt, FaUser, FaFolder, FaClock, FaFacebookF, FaTwitter, FaLin
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import BackToTop from '../../components/common/BackToTop';
+import { getImageUrl } from '../../utils/imageUtils';
 import '../../styles/BackToTop.css';
 import '../../styles/NewsDetail.css';
 
@@ -440,7 +441,7 @@ function NewsDetail() {
         <meta name="description" content={news.excerpt} />
         <meta property="og:title" content={news.title} />
         <meta property="og:description" content={news.excerpt} />
-        <meta property="og:image" content={news.featuredImage || news.image} />
+        <meta property="og:image" content={getImageUrl(news.featuredImage || news.image, 'news')} />
         <meta property="og:url" content={`https://reikidevs.com/berita/${news.slug || news.id}`} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -490,7 +491,7 @@ function NewsDetail() {
           
           <div className="featured-image-container">
             <img 
-              src={news.featuredImage || news.image} 
+              src={getImageUrl(news.featuredImage || news.image, 'news')} 
               alt={news.title} 
               className="featured-image"
               loading="lazy"
@@ -543,7 +544,7 @@ function NewsDetail() {
                   <Link to={`/berita/${item.slug || item.id}`} onClick={() => window.scrollTo(0, 0)}>
                     <div className="related-news-image">
                       <img 
-                        src={item.featuredImage || item.image} 
+                        src={getImageUrl(item.featuredImage || item.image, 'news')} 
                         alt={item.title} 
                         className="related-image"
                         loading="lazy" 

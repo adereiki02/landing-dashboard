@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaClock, FaFolder } from 'react-icons/fa';
 import PropTypes from 'prop-types';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const NewsCard = ({ item }) => {
   // Estimate reading time
@@ -17,7 +18,7 @@ const NewsCard = ({ item }) => {
       <Link to={`/berita/${item.slug || item.id}`} className="news-card-link">
         <div className="news-card-image">
           <img 
-            src={item.featuredImage || item.image} 
+            src={getImageUrl(item.featuredImage || item.image)} 
             alt={item.title} 
             loading="lazy" 
             width="800" 

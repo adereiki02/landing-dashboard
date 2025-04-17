@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../common/Button';
 import SEO from '../common/SEO';
+import { getImageUrl } from '../../utils/imageUtils';
 import megaDigital from '../../assets/mega-digital.png';
 import bpbdJateng from '../../assets/bpbd-jateng.png';
 import psai from '../../assets/psai.png';

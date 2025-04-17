@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../common/Button';
 import axios from 'axios';
+import { getImageUrl } from '../../utils/imageUtils';
 import '../../styles/Portfolio.css';
 
 function Portfolio() {
@@ -47,7 +48,7 @@ function Portfolio() {
       {portfolioItems.map(item => (
         <div className="portfolio-item" key={item._id}>
           <div className="portfolio-image">
-            <img src={item.featuredImage} alt={item.title} loading="lazy" />
+            <img src={getImageUrl(item.featuredImage, 'portfolio')} alt={item.title} loading="lazy" />
           </div>
           <div className="portfolio-content">
             <h3>{item.title}</h3>
@@ -67,7 +68,7 @@ function Portfolio() {
           key={item._id}
         >
           <div className="portfolio-image">
-            <img src={item.featuredImage} alt={item.title} loading="lazy" />
+            <img src={getImageUrl(item.featuredImage, 'portfolio')} alt={item.title} loading="lazy" />
           </div>
           <div className="portfolio-content">
             <h3>{item.title}</h3>
