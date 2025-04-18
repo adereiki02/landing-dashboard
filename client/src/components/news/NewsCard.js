@@ -13,51 +13,12 @@ const NewsCard = ({ item }) => {
   
   const readingTime = calculateReadingTime(item.excerpt);
   
-  // Custom function to ensure image URL has the backend domain
-  const getFullImageUrl = (imagePath) => {
-    if (!imagePath) return '';
-    
-    // Backend URL
-    const backendUrl = 'https://reikidevs-official-production.up.railway.app';
-    
-    // If the image URL is already a full URL
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      // If it's already from our backend, return it as is
-      if (imagePath.startsWith(backendUrl)) {
-        return imagePath;
-      }
-      
-      // If it's from another domain but has our path structure, fix it
-      if (imagePath.includes('/uploads/news/')) {
-        const parts = imagePath.split('/uploads/news/');
-        if (parts.length > 1) {
-          return `${backendUrl}/uploads/news/${parts[1]}`;
-        }
-      }
-      
-      // If it's a completely external URL, return it as is
-      return imagePath;
-    }
-    
-    // Check if imagePath already includes the uploads path
-    const hasUploadsPath = imagePath.startsWith('uploads/') || imagePath.startsWith('/uploads/');
-    
-    if (hasUploadsPath) {
-      // Normalize path by removing leading slash if present
-      const normalizedPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
-      return `${backendUrl}/${normalizedPath}`;
-    } else {
-      // Assume it's a news image
-      return `${backendUrl}/uploads/news/${imagePath}`;
-    }
-  };
-  
   return (
     <article className="news-card" role="listitem">
       <Link to={`/berita/${item.slug || item.id}`} className="news-card-link">
         <div className="news-card-image">
           <img 
-            src={getFullImageUrl(item.featuredImage || item.image)} 
+            src={getImageUrl(item.featuredImage || item.image, 'news')} 
             alt={item.title} 
             loading="lazy" 
             width="800" 

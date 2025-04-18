@@ -1,0 +1,6 @@
+/* Pagination Ellipsis */
+.pagination-ellipsis {
+  margin: 0 0.25rem;
+  color: var(--gray-color);
+  font-weight: bold;
+}

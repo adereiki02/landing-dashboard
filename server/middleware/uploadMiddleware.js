@@ -39,7 +39,12 @@ const newsStorage = multer.diskStorage({
 // Configure storage for portfolio images
 const portfolioStorage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads/portfolio'));
+    const uploadDir = path.join(__dirname, '../uploads/portfolio');
+    // Ensure directory exists
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
   },
   filename: function(req, file, cb) {
     cb(null, `portfolio-${Date.now()}${path.extname(file.originalname)}`);
@@ -76,7 +81,7 @@ const uploadPortfolioImage = multer({
   storage: portfolioStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: fileFilter
-}).single('image');
+}).single('featuredImage'); // Changed from 'image' to 'featuredImage'
 
 // Middleware wrappers
 const uploadPartnerLogoMiddleware = (req, res, next) => {
@@ -104,10 +109,24 @@ const uploadNewsImageMiddleware = (req, res, next) => {
 const uploadPortfolioImageMiddleware = (req, res, next) => {
   uploadPortfolioImage(req, res, function(err) {
     if (err instanceof multer.MulterError) {
+      console.error('Multer error:', err);
       return res.status(400).json({ message: `Upload error: ${err.message}` });
     } else if (err) {
+      console.error('Upload error:', err);
       return res.status(400).json({ message: err.message });
     }
+    
+    // Log the file information
+    if (req.file) {
+      console.log('File uploaded successfully:', req.file);
+    } else {
+      console.log('No file uploaded');
+      // Don't require file for updates
+      if (req.method === 'PUT') {
+        console.log('Update operation - file not required');
+      }
+    }
+    
     next();
   });
 };

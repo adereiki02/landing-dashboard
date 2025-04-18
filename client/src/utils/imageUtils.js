@@ -11,14 +11,20 @@
 export const getImageUrl = (imagePath, type = 'news') => {
   if (!imagePath) return '';
   
-  // Backend URL
-  const backendUrl = 'https://reikidevs-official-production.up.railway.app';
+  // Determine if we're in development or production
+  const isDevelopment = process.env.NODE_ENV === 'development';
   
-  // If the image is already a full URL from our backend, return it as is
+  // Backend URL - use relative URL in development to leverage the proxy
+  const backendUrl = isDevelopment ? '' : 'https://reikidevs-official-production.up.railway.app';
+  
+  // If the image is already a full URL, handle it
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    // If it's already from our backend, return it as is
-    if (imagePath.startsWith(backendUrl)) {
-      return imagePath;
+    const productionUrl = 'https://reikidevs-official-production.up.railway.app';
+    
+    // If it's already from our production backend and we're in development,
+    // convert it to use the proxy
+    if (isDevelopment && imagePath.startsWith(productionUrl)) {
+      return imagePath.replace(productionUrl, '');
     }
     
     // If it's from another domain but has our path structure, fix it
@@ -44,7 +50,7 @@ export const getImageUrl = (imagePath, type = 'news') => {
   // Check if imagePath already includes the uploads path
   const hasUploadsPath = imagePath.startsWith('uploads/') || imagePath.startsWith('/uploads/');
   
-  // If imagePath already has the full path structure, add the backend URL
+  // If imagePath already has the full path structure, add the backend URL if needed
   if (hasUploadsPath) {
     // Normalize path by removing leading slash if present
     const normalizedPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;

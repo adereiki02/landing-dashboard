@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 // Set base URL from environment variable
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://reikidevs-official-production.up.railway.app/';
+// In development, we'll use the proxy defined in package.json
+// In production, we'll use the environment variable or the production URL
+const isDevelopment = process.env.NODE_ENV === 'development';
+axios.defaults.baseURL = isDevelopment ? '' : (process.env.REACT_APP_API_URL || 'https://reikidevs-official-production.up.railway.app');
 
 // Add a request interceptor
 axios.interceptors.request.use(

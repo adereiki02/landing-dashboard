@@ -12,11 +12,11 @@ function Portfolio() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch portfolio items from API
+    // Fetch featured portfolio items from API
     const fetchPortfolio = async () => {
       try {
-        const response = await axios.get('/api/portfolio?limit=4&status=published');
-        setPortfolioItems(response.data.portfolioItems);
+        const response = await axios.get('/api/portfolio/featured?limit=4');
+        setPortfolioItems(response.data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching portfolio:', err);

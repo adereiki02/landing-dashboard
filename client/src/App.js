@@ -15,17 +15,19 @@ import PartnersManagement from './pages/Dashboard/PartnersManagement';
 import WebsiteSettings from './pages/Dashboard/WebsiteSettings';
 import PartnerForm from './components/dashboard/PartnerForm';
 import NewsForm from './components/dashboard/NewsForm';
+import PortfolioForm from './components/dashboard/PortfolioForm';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import './styles/Landing.css';
 import './styles/Dashboard.css';
 import './styles/Auth.css';
 import './styles/NewsDetail.css';
 import './styles/NewsList.css';
+import './styles/pagination.css';
 
 
 
 function App() {
-  const [userInfo, setUserInfo] = useState(null);
+  const [, setUserInfo] = useState(null);
 
   useEffect(() => {
     // Check if user is logged in
@@ -95,6 +97,16 @@ function App() {
         <Route path="/dashboard/settings" element={
           <ProtectedRoute>
             <WebsiteSettings />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/portfolio/create" element={
+          <ProtectedRoute>
+            <PortfolioForm />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/portfolio/edit/:id" element={
+          <ProtectedRoute>
+            <PortfolioForm />
           </ProtectedRoute>
         } />
         

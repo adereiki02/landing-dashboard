@@ -1,16 +1,13 @@
 const mongoose = require('mongoose');
+const config = require('./config');
 
 const connectDB = async () => {
   try {
-    // Pilih URI database berdasarkan environment
-    const mongoUri = process.env.NODE_ENV === 'production' 
-      ? process.env.MONGO_URI_PROD 
-      : process.env.MONGO_URI_DEV;
+    // Log database connection information
+    console.log(`Connecting to ${config.nodeEnv} database`);
+    console.log(`Database URI: ${config.mongoUri.substring(0, 20)}...`);
     
-    // Log informasi koneksi database yang digunakan
-    console.log(`Using ${process.env.NODE_ENV} database`);
-    
-    const conn = await mongoose.connect(mongoUri, {
+    const conn = await mongoose.connect(config.mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
@@ -18,6 +15,7 @@ const connectDB = async () => {
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`Database name: ${conn.connection.name}`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);

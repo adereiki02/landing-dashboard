@@ -14,6 +14,7 @@
     "check-db": "cross-env NODE_ENV=development node scripts/checkConnection.js",
     "check-local-data": "cross-env NODE_ENV=development node scripts/checkLocalData.js",
     "check-prod-data": "cross-env NODE_ENV=development node scripts/checkProdData.js",
+    "create-sample-images": "node scripts/create-sample-images.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

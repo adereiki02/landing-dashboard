@@ -1,5 +1,9 @@
 const Portfolio = require('../models/Portfolio');
 const slugify = require('slugify');
+const fs = require('fs');
+const path = require('path');
+const config = require('../config/config');
+const { ensureFullUrl, processUrlArray } = require('../utils/urlHelper');
 
 // Get all portfolio items with pagination
 exports.getAllPortfolioItems = async (req, res) => {
@@ -43,7 +47,7 @@ exports.getAllPortfolioItems = async (req, res) => {
       total,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error getting portfolio items:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -59,7 +63,7 @@ exports.getPortfolioItemById = async (req, res) => {
     
     res.json(portfolioItem);
   } catch (error) {
-    console.error(error);
+    console.error('Error getting portfolio item by ID:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -75,7 +79,7 @@ exports.getPortfolioItemBySlug = async (req, res) => {
     
     res.json(portfolioItem);
   } catch (error) {
-    console.error(error);
+    console.error('Error getting portfolio item by slug:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -83,10 +87,55 @@ exports.getPortfolioItemBySlug = async (req, res) => {
 // Create portfolio item
 exports.createPortfolioItem = async (req, res) => {
   try {
+    console.log('Creating portfolio item with body:', req.body);
+    console.log('File:', req.file);
+    
     const { 
-      title, description, client, projectType, technologies, 
-      featuredImage, images, websiteUrl, completionDate, status 
+      title, description, client, projectType, websiteUrl, completionDate, status 
     } = req.body;
+    
+    // Validate required fields
+    if (!title || !description || !client || !projectType) {
+      return res.status(400).json({ 
+        message: 'Missing required fields', 
+        errors: {
+          title: !title ? 'Title is required' : null,
+          description: !description ? 'Description is required' : null,
+          client: !client ? 'Client is required' : null,
+          projectType: !projectType ? 'Project type is required' : null
+        }
+      });
+    }
+    
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ 
+        message: 'Featured image is required',
+        errors: {
+          featuredImage: 'Featured image is required'
+        }
+      });
+    }
+    
+    // Parse JSON strings from form data
+    let technologies = [];
+    let imageUrls = [];
+    
+    if (req.body.technologies) {
+      try {
+        technologies = JSON.parse(req.body.technologies);
+      } catch (err) {
+        console.error('Error parsing technologies:', err);
+      }
+    }
+    
+    if (req.body.images) {
+      try {
+        imageUrls = JSON.parse(req.body.images);
+      } catch (err) {
+        console.error('Error parsing images:', err);
+      }
+    }
     
     // Generate slug from title
     const slug = slugify(title, { lower: true, strict: true });
@@ -101,37 +150,75 @@ exports.createPortfolioItem = async (req, res) => {
     const highestOrder = await Portfolio.findOne().sort({ order: -1 });
     const order = highestOrder ? highestOrder.order + 1 : 1;
     
+    // Create the featured image path
+    const featuredImagePath = `/uploads/portfolio/${req.file.filename}`;
+    const featuredImage = ensureFullUrl(featuredImagePath);
+    
+    // Process additional images to add full URLs
+    if (imageUrls && imageUrls.length > 0) {
+      imageUrls = processUrlArray(imageUrls);
+    }
+    
+    // Create new portfolio item
     const portfolioItem = new Portfolio({
       title,
       slug,
       description,
       client,
       projectType,
-      technologies: technologies || [],
+      technologies,
       featuredImage,
-      images: images || [],
-      websiteUrl,
-      completionDate,
+      images: imageUrls,
+      websiteUrl: websiteUrl || '',
+      completionDate: completionDate || null,
       status: status || 'published',
       order,
+      isFeatured: req.body.isFeatured === 'true',
     });
     
-    await portfolioItem.save();
+    const savedPortfolio = await portfolioItem.save();
+    console.log('Portfolio saved successfully:', savedPortfolio);
     
-    res.status(201).json(portfolioItem);
+    res.status(201).json(savedPortfolio);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error creating portfolio item:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      message: error.message || 'Server Error',
+      stack: config.isDevelopment ? error.stack : undefined
+    });
   }
 };
 
 // Update portfolio item
 exports.updatePortfolioItem = async (req, res) => {
   try {
+    console.log('Updating portfolio item with body:', req.body);
+    console.log('File:', req.file);
+    
     const { 
-      title, description, client, projectType, technologies, 
-      featuredImage, images, websiteUrl, completionDate, status, isFeatured 
+      title, description, client, projectType, websiteUrl, completionDate, status, isFeatured, featuredImage 
     } = req.body;
+    
+    // Parse JSON strings from form data
+    let technologies = [];
+    let imageUrls = [];
+    
+    if (req.body.technologies) {
+      try {
+        technologies = JSON.parse(req.body.technologies);
+      } catch (err) {
+        console.error('Error parsing technologies:', err);
+      }
+    }
+    
+    if (req.body.images) {
+      try {
+        imageUrls = JSON.parse(req.body.images);
+      } catch (err) {
+        console.error('Error parsing images:', err);
+      }
+    }
     
     let portfolioItem = await Portfolio.findById(req.params.id);
     
@@ -151,25 +238,44 @@ exports.updatePortfolioItem = async (req, res) => {
       }
     }
     
+    // Handle the uploaded file if it exists
+    if (req.file) {
+      const featuredImagePath = `/uploads/portfolio/${req.file.filename}`;
+      portfolioItem.featuredImage = ensureFullUrl(featuredImagePath);
+    } else if (featuredImage) {
+      // If no file is uploaded but featuredImage is provided in the request body
+      portfolioItem.featuredImage = featuredImage;
+    }
+    
+    // Check if featuredImage exists after update attempt
+    if (!portfolioItem.featuredImage) {
+      return res.status(400).json({ message: 'Featured image is required' });
+    }
+    
+    // Process additional images to add full URLs
+    if (imageUrls && imageUrls.length > 0) {
+      imageUrls = processUrlArray(imageUrls);
+    }
+    
     portfolioItem.title = title || portfolioItem.title;
     portfolioItem.slug = slug;
     portfolioItem.description = description || portfolioItem.description;
     portfolioItem.client = client || portfolioItem.client;
     portfolioItem.projectType = projectType || portfolioItem.projectType;
-    portfolioItem.technologies = technologies || portfolioItem.technologies;
-    portfolioItem.featuredImage = featuredImage || portfolioItem.featuredImage;
-    portfolioItem.images = images || portfolioItem.images;
+    portfolioItem.technologies = technologies.length > 0 ? technologies : portfolioItem.technologies;
+    portfolioItem.images = imageUrls.length > 0 ? imageUrls : portfolioItem.images;
     portfolioItem.websiteUrl = websiteUrl !== undefined ? websiteUrl : portfolioItem.websiteUrl;
     portfolioItem.completionDate = completionDate || portfolioItem.completionDate;
     portfolioItem.status = status || portfolioItem.status;
-    portfolioItem.isFeatured = isFeatured !== undefined ? isFeatured : portfolioItem.isFeatured;
+    portfolioItem.isFeatured = isFeatured !== undefined ? (isFeatured === 'true' || isFeatured === true) : portfolioItem.isFeatured;
     
-    await portfolioItem.save();
+    const updatedPortfolio = await portfolioItem.save();
+    console.log('Portfolio updated successfully:', updatedPortfolio);
     
-    res.json(portfolioItem);
+    res.json(updatedPortfolio);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error updating portfolio item:', error);
+    res.status(500).json({ message: error.message || 'Server Error' });
   }
 };
 
@@ -186,7 +292,7 @@ exports.deletePortfolioItem = async (req, res) => {
     
     res.json({ message: 'Portfolio item removed' });
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting portfolio item:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -197,7 +303,7 @@ exports.getProjectTypes = async (req, res) => {
     const projectTypes = await Portfolio.distinct('projectType');
     res.json(projectTypes);
   } catch (error) {
-    console.error(error);
+    console.error('Error getting project types:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -212,7 +318,7 @@ exports.getFeaturedPortfolioItems = async (req, res) => {
     
     res.json(featuredItems);
   } catch (error) {
-    console.error(error);
+    console.error('Error getting featured portfolio items:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -261,8 +367,7 @@ exports.updatePortfolioItemOrder = async (req, res) => {
     
     res.json({ message: 'Order updated successfully' });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating portfolio item order:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
-

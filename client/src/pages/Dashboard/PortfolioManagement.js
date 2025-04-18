@@ -29,20 +29,29 @@ function PortfolioManagement() {
       if (!parsedUser.role || (parsedUser.role !== 'admin' && parsedUser.role !== 'superadmin')) {
         navigate('/');
       } else {
-        // Fetch portfolio data
-        fetchPortfolios();
         // Fetch project types
         fetchProjectTypes();
+        // Fetch portfolio data
+        fetchPortfolios();
       }
     } else {
       navigate('/login');
     }
-  }, [navigate, currentPage, projectTypeFilter, featuredFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate]);
+
+  useEffect(() => {
+    // Fetch portfolio data when these dependencies change
+    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
+      fetchPortfolios();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, projectTypeFilter, featuredFilter, searchTerm]);
 
   const fetchPortfolios = async () => {
     try {
       setLoading(true);
-      let url = `/api/portfolio?page=${currentPage}`;
+      let url = `/api/portfolio?page=${currentPage}&limit=9`;
       
       if (projectTypeFilter !== 'all') {
         url += `&projectType=${projectTypeFilter}`;
@@ -50,6 +59,10 @@ function PortfolioManagement() {
       
       if (featuredFilter !== 'all') {
         url += `&isFeatured=${featuredFilter === 'featured'}`;
+      }
+      
+      if (searchTerm) {
+        url += `&search=${searchTerm}`;
       }
       
       const response = await axios.get(url);
@@ -109,11 +122,7 @@ function PortfolioManagement() {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
-  const filteredPortfolios = portfolios.filter(item =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.projectType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.client.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPortfolios = portfolios;
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -209,25 +218,41 @@ function PortfolioManagement() {
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            Previous
+            &laquo; Previous
           </button>
           <div className="pagination-numbers">
-            {[...Array(totalPages).keys()].map(number => (
-              <button 
-                key={number + 1}
-                className={`pagination-number ${currentPage === number + 1 ? 'active' : ''}`}
-                onClick={() => handlePageChange(number + 1)}
-              >
-                {number + 1}
-              </button>
-            ))}
+            {Array.from({ length: totalPages }, (_, i) => {
+              // Show first page, last page, current page, and pages around current page
+              const pageNum = i + 1;
+              if (
+                pageNum === 1 || 
+                pageNum === totalPages || 
+                (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+              ) {
+                return (
+                  <button 
+                    key={pageNum}
+                    className={`pagination-number ${currentPage === pageNum ? 'active' : ''}`}
+                    onClick={() => handlePageChange(pageNum)}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              } else if (
+                (pageNum === currentPage - 2 && currentPage > 3) || 
+                (pageNum === currentPage + 2 && currentPage < totalPages - 2)
+              ) {
+                return <span key={pageNum} className="pagination-ellipsis">...</span>;
+              }
+              return null;
+            }).filter(Boolean)}
           </div>
           <button 
             className="pagination-btn"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            Next
+            Next &raquo;
           </button>
         </div>
       </div>

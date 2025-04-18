@@ -1,5 +1,7 @@
 const News = require('../models/News');
 const slugify = require('slugify');
+const config = require('../config/config');
+const { ensureFullUrl } = require('../utils/urlHelper');
 
 // Get all news with pagination
 exports.getAllNews = async (req, res) => {
@@ -109,7 +111,9 @@ exports.createNews = async (req, res) => {
     const excerpt = textContent.length > 300 ? textContent.substring(0, 297) + '...' : textContent;
     
     // Handle featured image upload
-    const featuredImage = req.file ? `/uploads/news/${req.file.filename}` : '';
+    const featuredImagePath = req.file ? `/uploads/news/${req.file.filename}` : '';
+    // Create full URL for the image
+    const featuredImage = req.file ? ensureFullUrl(featuredImagePath) : '';
     
     // Parse tags if they're sent as JSON string
     let parsedTags = [];
@@ -199,7 +203,11 @@ exports.updateNews = async (req, res) => {
     }
     
     // Handle featured image upload
-    const featuredImage = req.file ? `/uploads/news/${req.file.filename}` : news.featuredImage;
+    let featuredImage = news.featuredImage;
+    if (req.file) {
+      const featuredImagePath = `/uploads/news/${req.file.filename}`;
+      featuredImage = ensureFullUrl(featuredImagePath);
+    }
     
     // Parse tags if they're sent as JSON string
     let parsedTags = news.tags;

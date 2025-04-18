@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const config = require('./config/config');
 const connectDB = require('./config/db');
 const { createSuperAdmin } = require('./controllers/authController');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
@@ -26,7 +27,10 @@ mongoose.connection.once('connected', () => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: config.frontendUrl,
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -58,9 +62,9 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = config.port;
 const server = app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
 });
 
 // Handle unhandled promise rejections

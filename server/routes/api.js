@@ -3,6 +3,7 @@ const router = express.Router();
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
+const config = require('../config/config');
 const userRoutes = require('./userRoutes');
 const authRoutes = require('./authRoutes');
 const newsRoutes = require('./newsRoutes');
@@ -22,9 +23,9 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: '/',
-        description: 'API Server',
-      },
+        url: config.backendUrl,
+        description: `API Server (${config.nodeEnv})`
+      }
     ],
     components: {
       securitySchemes: {

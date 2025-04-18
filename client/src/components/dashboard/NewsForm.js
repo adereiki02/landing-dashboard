@@ -155,7 +155,8 @@ function NewsForm() {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.title.trim()) {
+    // Add null/undefined checks before calling trim()
+    if (!formData.title || !formData.title.trim()) {
       newErrors.title = 'Title is required';
     } else if (formData.title.trim().length < 5) {
       newErrors.title = 'Title must be at least 5 characters long';
@@ -163,13 +164,13 @@ function NewsForm() {
       newErrors.title = 'Title cannot exceed 200 characters';
     }
     
-    if (!formData.content.trim()) {
+    if (!formData.content || !formData.content.trim()) {
       newErrors.content = 'Content is required';
     } else if (formData.content.trim().length < 20) {
       newErrors.content = 'Content must be at least 20 characters long';
     }
     
-    if (!formData.category.trim()) {
+    if (!formData.category || !formData.category.trim()) {
       newErrors.category = 'Category is required';
     }
     
