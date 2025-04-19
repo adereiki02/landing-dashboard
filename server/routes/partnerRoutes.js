@@ -21,6 +21,6 @@ router.get('/:id', getPartnerById);
 router.post('/', protect, admin, uploadPartnerLogoMiddleware, createPartner);
 router.put('/:id', protect, admin, uploadPartnerLogoMiddleware, updatePartner);
 router.delete('/:id', protect, admin, deletePartner);
-router.put('/order/update', protect, admin, updatePartnerOrder);
+router.put('/order', protect, admin, updatePartnerOrder);
 
 module.exports = router;

@@ -190,14 +190,14 @@ function NewsManagement() {
                     </td>
                     <td>{item.viewCount}</td>
                     <td className="actions">
-                      <Link to={`/berita/${item.slug}`} className="btn-view" target="_blank">
-                        <FaEye /> View
+                      <Link to={`/berita/${item.slug}`} className="btn-view" target="_blank" title="View">
+                        <FaEye />
                       </Link>
-                      <Link to={`/dashboard/news/edit/${item._id}`} className="btn-edit">
-                        <FaEdit /> Edit
+                      <Link to={`/dashboard/news/edit/${item._id}`} className="btn-edit" title="Edit">
+                        <FaEdit />
                       </Link>
-                      <button onClick={() => openDeleteModal(item)} className="btn-delete">
-                        <FaTrash /> Delete
+                      <button onClick={() => openDeleteModal(item)} className="btn-delete" title="Delete">
+                        <FaTrash />
                       </button>
                     </td>
                   </tr>

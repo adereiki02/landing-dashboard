@@ -660,15 +660,18 @@
 }
 
 .btn-edit, .btn-delete, .btn-view {
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.2s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  width: 36px;
+  height: 36px;
 }
 
 .btn-edit {
@@ -705,8 +708,7 @@
 }
 
 .btn-edit svg, .btn-delete svg, .btn-view svg {
-  margin-right: 0.35rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 /* Pagination */

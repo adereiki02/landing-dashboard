@@ -97,6 +97,8 @@ exports.updatePartner = async (req, res) => {
   try {
     const { name, websiteUrl, description, isActive } = req.body;
     
+    console.log('Update partner request body:', req.body);
+    
     let partner = await Partner.findById(req.params.id);
     
     if (!partner) {
@@ -111,16 +113,23 @@ exports.updatePartner = async (req, res) => {
       partner.logo = req.body.logo;
     }
     
-    partner.name = name || partner.name;
-    partner.websiteUrl = websiteUrl !== undefined ? websiteUrl : partner.websiteUrl;
-    partner.description = description !== undefined ? description : partner.description;
-    partner.isActive = isActive !== undefined ? isActive === 'true' : partner.isActive;
+    // Update fields if provided
+    if (name !== undefined) partner.name = name;
+    if (websiteUrl !== undefined) partner.websiteUrl = websiteUrl;
+    if (description !== undefined) partner.description = description;
+    
+    // Handle isActive specifically
+    if (isActive !== undefined) {
+      // Convert to boolean if it's a string
+      partner.isActive = typeof isActive === 'boolean' ? isActive : isActive === 'true';
+      console.log('Setting isActive to:', partner.isActive);
+    }
     
     await partner.save();
     
     res.json(partner);
   } catch (error) {
-    console.error(error);
+    console.error('Error updating partner:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -195,12 +204,14 @@ exports.updatePartnerOrder = async (req, res) => {
 // Get active partners
 exports.getActivePartners = async (req, res) => {
   try {
+    console.log('Getting active partners');
     const partners = await Partner.find({ isActive: true })
       .sort({ order: 1 });
     
+    console.log(`Found ${partners.length} active partners`);
     res.json(partners);
   } catch (error) {
-    console.error(error);
+    console.error('Error in getActivePartners:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };

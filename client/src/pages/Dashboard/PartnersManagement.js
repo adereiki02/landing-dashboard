@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
-import { FaPlus, FaEdit, FaTrash, FaSearch, FaArrowUp, FaArrowDown, FaLink, FaFilter, FaToggleOn, FaToggleOff, FaSort } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaArrowUp, FaArrowDown, FaLink, FaFilter, 
+  FaToggleOn, FaToggleOff, FaSort, FaEye, FaInfoCircle, FaExternalLinkAlt } from 'react-icons/fa';
 import '../../styles/Dashboard.css';
 import '../../styles/DashboardComponents.css';
 
@@ -82,7 +83,9 @@ function PartnersManagement() {
 
   const toggleActive = async (id, currentStatus) => {
     try {
-      await axios.put(`/api/partners/${id}`, { isActive: !currentStatus });
+      console.log('Toggling active status:', id, 'Current status:', currentStatus, 'New status:', !currentStatus);
+      const response = await axios.put(`/api/partners/${id}`, { isActive: !currentStatus });
+      console.log('Toggle response:', response.data);
       // Refresh partners list
       fetchPartners();
     } catch (error) {
@@ -232,10 +235,14 @@ function PartnersManagement() {
         <div className="content-header">
           <div className="title-section">
             <h2>Partners Management</h2>
-            <p>{filteredPartners.length} partners found</p>
+            <p>
+              <FaInfoCircle className="info-icon" /> 
+              {filteredPartners.length} partner{filteredPartners.length !== 1 ? 's' : ''} found
+            </p>
           </div>
-          <Link to="/dashboard/partners/create" className="btn-primary">
-            <FaPlus /> Add New Partner
+          <Link to="/dashboard/partners/create" className="btn-primary btn-with-icon">
+            <FaPlus className="btn-icon" /> 
+            <span>Add New Partner</span>
           </Link>
         </div>
         
@@ -245,59 +252,87 @@ function PartnersManagement() {
               <FaSearch className="search-icon" />
               <input 
                 type="text" 
-                placeholder="Search by name..." 
+                placeholder="Search partners by name..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search partners"
               />
+              {searchTerm && (
+                <button 
+                  className="clear-search" 
+                  onClick={() => setSearchTerm('')}
+                  aria-label="Clear search"
+                >
+                  &times;
+                </button>
+              )}
             </div>
             
             <div className="filter-actions">
-              <button className="btn-filter" onClick={toggleFilters}>
-                <FaFilter /> Filters
+              <button className="btn-filter" onClick={toggleFilters} aria-expanded={showFilters}>
+                <FaFilter className="filter-icon" /> 
+                <span>Filters</span>
+                {(statusFilter !== 'all' || sortOrder !== 'order') && (
+                  <span className="filter-badge">!</span>
+                )}
               </button>
-              <select 
-                className="sort-select"
-                value={sortOrder}
-                onChange={handleSortOrderChange}
-              >
-                <option value="order">Custom Order</option>
-                <option value="nameAsc">Name (A-Z)</option>
-                <option value="nameDesc">Name (Z-A)</option>
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </select>
+              <div className="sort-container">
+                <select 
+                  className="sort-select"
+                  value={sortOrder}
+                  onChange={handleSortOrderChange}
+                  aria-label="Sort partners"
+                >
+                  <option value="order">Custom Order</option>
+                  <option value="nameAsc">Name (A-Z)</option>
+                  <option value="nameDesc">Name (Z-A)</option>
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+                <FaSort className="sort-icon" />
+              </div>
             </div>
           </div>
           
           {showFilters && (
             <div className="expanded-filters">
               <div className="filter-group">
-                <label>Status:</label>
-                <select 
-                  value={statusFilter}
-                  onChange={handleStatusFilterChange}
-                >
-                  <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+                <label htmlFor="status-filter">Status:</label>
+                <div className="select-wrapper">
+                  <select 
+                    id="status-filter"
+                    value={statusFilter}
+                    onChange={handleStatusFilterChange}
+                  >
+                    <option value="all">All Status</option>
+                    <option value="active">Active Only</option>
+                    <option value="inactive">Inactive Only</option>
+                  </select>
+                </div>
               </div>
               
-              <button className="btn-clear-filters" onClick={clearFilters}>
-                Clear Filters
+              <button 
+                className="btn-clear-filters" 
+                onClick={clearFilters}
+                disabled={statusFilter === 'all' && sortOrder === 'order' && !searchTerm}
+              >
+                Reset All Filters
               </button>
             </div>
           )}
           
           {bulkActionSelected.length > 0 && (
             <div className="bulk-actions">
-              <span>{bulkActionSelected.length} partners selected</span>
+              <div className="bulk-info">
+                <span className="bulk-count">{bulkActionSelected.length}</span>
+                <span className="bulk-text">partner{bulkActionSelected.length !== 1 ? 's' : ''} selected</span>
+              </div>
               <div className="bulk-buttons">
                 <button className="btn-success" onClick={bulkActivate}>
-                  <FaToggleOn /> Activate All
+                  <FaToggleOn className="btn-icon" /> Activate All
                 </button>
                 <button className="btn-warning" onClick={bulkDeactivate}>
-                  <FaToggleOff /> Deactivate All
+                  <FaToggleOff className="btn-icon" /> Deactivate All
                 </button>
                 <button className="btn-secondary" onClick={() => setBulkActionSelected([])}>
                   Cancel
@@ -308,39 +343,52 @@ function PartnersManagement() {
           
           {filteredPartners.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">ud83dudc65</div>
+              <div className="empty-icon">🤝</div>
               <h3>No partners found</h3>
               <p>Try adjusting your search or filter criteria</p>
+              {(searchTerm || statusFilter !== 'all') && (
+                <button className="btn-secondary" onClick={clearFilters}>
+                  Clear All Filters
+                </button>
+              )}
             </div>
           ) : (
             <div className="table-responsive">
               <table className="data-table partners-table">
                 <thead>
                   <tr>
-                    <th>
-                      <input 
-                        type="checkbox" 
-                        checked={bulkActionSelected.length === filteredPartners.length && filteredPartners.length > 0}
-                        onChange={toggleAllSelection}
-                      />
+                    <th className="checkbox-column">
+                      <div className="custom-checkbox">
+                        <input 
+                          type="checkbox" 
+                          id="select-all"
+                          checked={bulkActionSelected.length === filteredPartners.length && filteredPartners.length > 0}
+                          onChange={toggleAllSelection}
+                        />
+                        <label htmlFor="select-all" className="checkbox-label"></label>
+                      </div>
                     </th>
-                    <th>Order</th>
+                    <th className="order-column">Order</th>
                     <th>Logo</th>
                     <th>Name</th>
                     <th>Website</th>
                     <th>Status</th>
-                    <th>Actions</th>
+                    <th className="actions-column">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredPartners.map((item, index) => (
                     <tr key={item._id} className={bulkActionSelected.includes(item._id) ? 'selected-row' : ''}>
                       <td>
-                        <input 
-                          type="checkbox" 
-                          checked={bulkActionSelected.includes(item._id)}
-                          onChange={() => toggleBulkSelection(item._id)}
-                        />
+                        <div className="custom-checkbox">
+                          <input 
+                            type="checkbox" 
+                            id={`select-${item._id}`}
+                            checked={bulkActionSelected.includes(item._id)}
+                            onChange={() => toggleBulkSelection(item._id)}
+                          />
+                          <label htmlFor={`select-${item._id}`} className="checkbox-label"></label>
+                        </div>
                       </td>
                       <td className="order-column">
                         <div className="order-buttons">
@@ -349,42 +397,50 @@ function PartnersManagement() {
                             disabled={index === 0}
                             className="order-btn"
                             title="Move up"
+                            aria-label="Move partner up"
                           >
                             <FaArrowUp />
                           </button>
-                          <span>{item.order}</span>
+                          <span className="order-number">{item.order}</span>
                           <button 
                             onClick={() => moveDown(item._id)} 
                             disabled={index === partners.length - 1}
                             className="order-btn"
                             title="Move down"
+                            aria-label="Move partner down"
                           >
                             <FaArrowDown />
                           </button>
                         </div>
                       </td>
-                      <td>
-                        <img 
-                          src={item.logo} 
-                          alt={item.name} 
-                          className="partner-logo"
-                          onClick={() => handleViewDetails(item)}
-                        />
+                      <td className="logo-column">
+                        <div className="logo-wrapper">
+                          <img 
+                            src={item.logo} 
+                            alt={`${item.name} logo`} 
+                            className="partner-logo"
+                            onClick={() => handleViewDetails(item)}
+                          />
+                        </div>
                       </td>
                       <td>
-                        <span className="partner-name">{item.name}</span>
+                        <span className="partner-name" onClick={() => handleViewDetails(item)}>{item.name}</span>
+                        {item.description && (
+                          <p className="partner-description">{item.description.substring(0, 60)}{item.description.length > 60 ? '...' : ''}</p>
+                        )}
                       </td>
                       <td>
                         {item.website ? (
                           <a href={item.website} target="_blank" rel="noopener noreferrer" className="website-link">
-                            <FaLink /> {new URL(item.website).hostname}
+                            <FaExternalLinkAlt className="link-icon" /> 
+                            <span>{new URL(item.website).hostname}</span>
                           </a>
                         ) : (
                           <span className="text-muted">No website</span>
                         )}
                       </td>
                       <td>
-                        <span className={`status-badge ${item.isActive ? 'active' : 'inactive'}`}>
+                        <span className={`partner-status-badge ${item.isActive ? 'active' : 'inactive-badge'}`}>
                           {item.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
@@ -394,14 +450,25 @@ function PartnersManagement() {
                             onClick={() => toggleActive(item._id, item.isActive)} 
                             className={`btn-toggle ${item.isActive ? 'active' : 'inactive'}`}
                             title={item.isActive ? 'Deactivate' : 'Activate'}
+                            aria-label={item.isActive ? 'Deactivate partner' : 'Activate partner'}
+                            style={{marginRight: '8px'}}
                           >
-                            {item.isActive ? <FaToggleOn /> : <FaToggleOff />}
+                            <span className="switch-track"></span>
+                            <span className="switch-icon">{item.isActive ? <FaToggleOn size={16} /> : <FaToggleOff size={16} />}</span>
                           </button>
-                          <Link to={`/dashboard/partners/edit/${item._id}`} className="btn-edit" title="Edit partner">
-                            <FaEdit />
+                          <button 
+                            onClick={() => handleViewDetails(item)}
+                            className="btn-view"
+                            title="View details"
+                            aria-label="View partner details"
+                          >
+                            <FaEye size={18} />
+                          </button>
+                          <Link to={`/dashboard/partners/edit/${item._id}`} className="btn-edit" title="Edit partner" aria-label="Edit partner">
+                            <FaEdit size={18} />
                           </Link>
-                          <button onClick={() => handleDelete(item._id)} className="btn-delete" title="Delete partner">
-                            <FaTrash />
+                          <button onClick={() => handleDelete(item._id)} className="btn-delete" title="Delete partner" aria-label="Delete partner">
+                            <FaTrash size={18} />
                           </button>
                         </div>
                       </td>
@@ -417,29 +484,50 @@ function PartnersManagement() {
               <button 
                 onClick={() => handlePageChange(currentPage - 1)} 
                 disabled={currentPage === 1}
-                className="pagination-button"
+                className="pagination-button prev-button"
+                aria-label="Previous page"
               >
-                Previous
+                <span aria-hidden="true">&laquo;</span> Previous
               </button>
               
               <div className="pagination-numbers">
-                {[...Array(totalPages).keys()].map(number => (
-                  <button
-                    key={number + 1}
-                    onClick={() => handlePageChange(number + 1)}
-                    className={`pagination-number ${currentPage === number + 1 ? 'active' : ''}`}
-                  >
-                    {number + 1}
-                  </button>
-                ))}
+                {[...Array(totalPages).keys()].map(number => {
+                  const pageNumber = number + 1;
+                  // Show first page, last page, current page, and pages around current page
+                  if (
+                    pageNumber === 1 || 
+                    pageNumber === totalPages || 
+                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={`pagination-number ${currentPage === pageNumber ? 'active' : ''}`}
+                        aria-label={`Page ${pageNumber}`}
+                        aria-current={currentPage === pageNumber ? 'page' : undefined}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  } else if (
+                    (pageNumber === 2 && currentPage > 3) ||
+                    (pageNumber === totalPages - 1 && currentPage < totalPages - 2)
+                  ) {
+                    // Show ellipsis for skipped pages
+                    return <span key={pageNumber} className="pagination-ellipsis">...</span>;
+                  }
+                  return null;
+                })}
               </div>
               
               <button 
                 onClick={() => handlePageChange(currentPage + 1)} 
                 disabled={currentPage === totalPages}
-                className="pagination-button"
+                className="pagination-button next-button"
+                aria-label="Next page"
               >
-                Next
+                Next <span aria-hidden="true">&raquo;</span>
               </button>
             </div>
           )}
@@ -448,40 +536,76 @@ function PartnersManagement() {
       
       {selectedPartner && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal}>u00d7</button>
-            <h2>{selectedPartner.name}</h2>
+          <div className="modal-content partner-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal} aria-label="Close modal">&times;</button>
+            <div className="modal-header">
+              <h2>{selectedPartner.name}</h2>
+              <span className={`partner-status-badge ${selectedPartner.isActive ? 'active' : 'inactive-badge'}`}>
+                {selectedPartner.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </div>
             <div className="modal-body">
-              <img src={selectedPartner.logo} alt={selectedPartner.name} className="modal-image" />
+              <div className="modal-image-container">
+                <img src={selectedPartner.logo} alt={`${selectedPartner.name} logo`} className="modal-image" />
+              </div>
               <div className="modal-details">
-                <p><strong>Status:</strong> 
-                  <span className={`status-badge ${selectedPartner.isActive ? 'active' : 'inactive'}`}>
-                    {selectedPartner.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </p>
-                {selectedPartner.website && (
-                  <p>
-                    <strong>Website:</strong> 
-                    <a href={selectedPartner.website} target="_blank" rel="noopener noreferrer">
-                      {selectedPartner.website}
-                    </a>
-                  </p>
-                )}
-                <p><strong>Order:</strong> {selectedPartner.order}</p>
-                {selectedPartner.description && (
-                  <p><strong>Description:</strong> {selectedPartner.description}</p>
-                )}
+                <div className="detail-group">
+                  <h4>Partner Information</h4>
+                  <div className="detail-item">
+                    <span className="detail-label">Display Order:</span>
+                    <span className="detail-value">{selectedPartner.order}</span>
+                  </div>
+                  
+                  {selectedPartner.website && (
+                    <div className="detail-item">
+                      <span className="detail-label">Website:</span>
+                      <a href={selectedPartner.website} target="_blank" rel="noopener noreferrer" className="detail-link">
+                        {selectedPartner.website} <FaExternalLinkAlt className="external-link-icon" />
+                      </a>
+                    </div>
+                  )}
+                  
+                  {selectedPartner.description && (
+                    <div className="detail-item description-item">
+                      <span className="detail-label">Description:</span>
+                      <p className="detail-value description-value">{selectedPartner.description}</p>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="detail-group">
+                  <h4>System Information</h4>
+                  <div className="detail-item">
+                    <span className="detail-label">Created:</span>
+                    <span className="detail-value">
+                      {selectedPartner.createdAt ? new Date(selectedPartner.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                      }) : 'N/A'}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Last Updated:</span>
+                    <span className="detail-value">
+                      {selectedPartner.updatedAt ? new Date(selectedPartner.updatedAt).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                      }) : 'N/A'}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="modal-actions">
               <Link to={`/dashboard/partners/edit/${selectedPartner._id}`} className="btn-primary">
-                <FaEdit /> Edit Partner
+                <FaEdit size={18} className="btn-icon" /> Edit Partner
               </Link>
               <button 
                 onClick={() => toggleActive(selectedPartner._id, selectedPartner.isActive)}
                 className={`btn-toggle-large ${selectedPartner.isActive ? 'active' : 'inactive'}`}
               >
-                {selectedPartner.isActive ? 'Deactivate' : 'Activate'}
+                {selectedPartner.isActive ? <><FaToggleOff size={20} className="btn-icon" /> Deactivate</> : <><FaToggleOn size={20} className="btn-icon" /> Activate</>}
+              </button>
+              <button className="btn-secondary" onClick={closeModal}>
+                Close
               </button>
             </div>
           </div>

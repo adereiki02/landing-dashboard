@@ -85,6 +85,12 @@ const uploadPortfolioImage = multer({
 
 // Middleware wrappers
 const uploadPartnerLogoMiddleware = (req, res, next) => {
+  // Skip file upload if we're just updating isActive status
+  if (req.method === 'PUT' && req.body && (req.body.isActive !== undefined) && Object.keys(req.body).length === 1) {
+    console.log('Skipping file upload for isActive update');
+    return next();
+  }
+  
   uploadPartnerLogo(req, res, function(err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ message: `Upload error: ${err.message}` });
