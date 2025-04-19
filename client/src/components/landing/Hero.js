@@ -6,10 +6,11 @@ import megaDigital from '../../assets/mega-digital.png';
 import bpbdJateng from '../../assets/bpbd-jateng.png';
 import psai from '../../assets/psai.png';
 import customerQueue from '../../assets/customer-queue.png';
-import reikiLogo from '../../assets/reikidevelop.png';
+import { useSettings } from '../../context/SettingsContext';
 
 function Hero() {
   const [isMobile, setIsMobile] = useState(false);
+  const { settings } = useSettings();
 
   useEffect(() => {
     // Check if we're on mobile
@@ -34,8 +35,8 @@ function Hero() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Reiki Develop",
-    "description": "Solusi digital terbaik untuk bisnis Anda",
+    "name": settings.siteName,
+    "description": settings.siteDescription,
     "url": "https://reikidevelop.com",
     "serviceType": ["Web Development", "Graphic Design", "Digital Solutions"]
   };
@@ -77,7 +78,7 @@ function Hero() {
         </div>
         
         <div className="mobile-logo-watermark">
-          <img src={reikiLogo} alt="Reiki Develop logo" />
+          <img src={settings.logo} alt={settings.siteName} />
         </div>
       </div>
     </div>
@@ -120,7 +121,7 @@ function Hero() {
         </div>
         
         <div className="logo-watermark" aria-hidden="true">
-          <img src={reikiLogo} alt="Reiki Develop logo" />
+          <img src={settings.logo} alt={settings.siteName} />
         </div>
         
         <div className="decorative-circle circle-1" aria-hidden="true"></div>
@@ -134,8 +135,8 @@ function Hero() {
   return (
     <>
       <SEO 
-        title="Reiki Develop - Solusi Digital Terbaik untuk Bisnis Anda"
-        description="Solusi digital terbaik untuk bisnis Anda. Layanan pengembangan web, desain grafis, dan solusi digital untuk pertumbuhan bisnis di era digital."
+        title={`${settings.siteName} - ${settings.siteDescription}`}
+        description={settings.siteDescription}
         schemaData={schemaData}
       />
       <section id="home" className="hero-section" aria-label="Beranda">

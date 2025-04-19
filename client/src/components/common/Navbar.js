@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import logoImage from '../../assets/reikidevelop.png'; // Pastikan untuk menyimpan logo di folder assets
+import { useSettings } from '../../context/SettingsContext';
 
 function Navbar({ visible = true }) {
   const [scrolled, setScrolled] = useState(false);
@@ -10,6 +10,7 @@ function Navbar({ visible = true }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isNewsListPage = location.pathname === '/berita';
+  const { settings } = useSettings();
 
   useEffect(() => {
     // Check if user is logged in
@@ -90,7 +91,7 @@ function Navbar({ visible = true }) {
     <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${visible ? '' : 'navbar-hidden'} ${isNewsListPage && !showNavbar ? 'navbar-hidden' : ''}`}>
       <div className="navbar-container">
         <div className="navbar-logo" onClick={() => scrollToSection('home')} style={{cursor: 'pointer'}}>
-          <img src={logoImage} alt="ReiKi Develop Logo" className="logo-image" />
+          <img src={settings.logo} alt={settings.siteName} className="logo-image" />
         </div>
         <div className={`menu-icon ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}>
           <span></span>

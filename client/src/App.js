@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Helmet } from 'react-helmet';
 import './utils/axiosConfig'; // Import axios configuration
+import { SettingsProvider } from './context/SettingsContext';
+import DynamicHelmet from './components/common/DynamicHelmet';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import NewsDetail from './pages/DetailBerita/NewsDetail';
@@ -26,8 +27,6 @@ import './styles/NewsList.css';
 import './styles/pagination.css';
 import './styles/PortfolioList.css';
 
-
-
 function App() {
   const [, setUserInfo] = useState(null);
 
@@ -41,84 +40,79 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#0D8ABC" />
-        <link rel="icon" href="/favicon.ico" />
-        <title>reikidevs - Digital Agency</title>
-        <meta name="description" content="reikidevs adalah digital agency yang menyediakan layanan pengembangan web, aplikasi mobile, dan solusi digital untuk bisnis Anda." />
-      </Helmet>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
-        {/* Dashboard Routes */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/news" element={
-          <ProtectedRoute>
-            <NewsManagement />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/portfolio" element={
-          <ProtectedRoute>
-            <PortfolioManagement />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/partners" element={
-          <ProtectedRoute>
-            <PartnersManagement />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/partners/create" element={
-          <ProtectedRoute>
-            <PartnerForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/partners/edit/:id" element={
-          <ProtectedRoute>
-            <PartnerForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/news/create" element={
-          <ProtectedRoute>
-            <NewsForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/news/edit/:id" element={
-          <ProtectedRoute>
-            <NewsForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/settings" element={
-          <ProtectedRoute>
-            <WebsiteSettings />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/portfolio/create" element={
-          <ProtectedRoute>
-            <PortfolioForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/dashboard/portfolio/edit/:id" element={
-          <ProtectedRoute>
-            <PortfolioForm />
-          </ProtectedRoute>
-        } />
-        
-        {/* Public Routes */}
-        <Route path="/berita" element={<NewsList />} />
-        <Route path="/berita/:id" element={<NewsDetail />} />
-        <Route path="/portfolio" element={<ListPortfolio />} />
-      </Routes>
-      <SpeedInsights />
-    </Router>
+    <SettingsProvider>
+      <Router>
+        <DynamicHelmet />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Dashboard Routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/news" element={
+            <ProtectedRoute>
+              <NewsManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/portfolio" element={
+            <ProtectedRoute>
+              <PortfolioManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/partners" element={
+            <ProtectedRoute>
+              <PartnersManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/partners/create" element={
+            <ProtectedRoute>
+              <PartnerForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/partners/edit/:id" element={
+            <ProtectedRoute>
+              <PartnerForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/news/create" element={
+            <ProtectedRoute>
+              <NewsForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/news/edit/:id" element={
+            <ProtectedRoute>
+              <NewsForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/settings" element={
+            <ProtectedRoute>
+              <WebsiteSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/portfolio/create" element={
+            <ProtectedRoute>
+              <PortfolioForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/portfolio/edit/:id" element={
+            <ProtectedRoute>
+              <PortfolioForm />
+            </ProtectedRoute>
+          } />
+          
+          {/* Public Routes */}
+          <Route path="/berita" element={<NewsList />} />
+          <Route path="/berita/:id" element={<NewsDetail />} />
+          <Route path="/portfolio" element={<ListPortfolio />} />
+        </Routes>
+        <SpeedInsights />
+      </Router>
+    </SettingsProvider>
   );
 }
 

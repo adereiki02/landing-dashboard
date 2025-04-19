@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaNewspaper, FaBriefcase, FaHandshake, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import '../../styles/Dashboard.css';
-import reikiLogo from '../../assets/reikidevelop.png';
+import { useSettings } from '../../context/SettingsContext';
 
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const { settings } = useSettings();
   
   useEffect(() => {
     const userInfo = localStorage.getItem('userInfo');
@@ -24,7 +25,7 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <img src={reikiLogo} alt="ReikiDevs Logo" className="sidebar-logo" />
+        <img src={settings.logo} alt={settings.siteName} className="sidebar-logo" />
       </div>
       <div className="sidebar-user">
         <div className="user-avatar">

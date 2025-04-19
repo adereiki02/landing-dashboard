@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Navbar from '../components/common/Navbar';
 import Hero from '../components/landing/Hero';
 import Features from '../components/landing/Features';
@@ -8,11 +8,10 @@ import Partners from '../components/landing/Partners';
 import Testimonials from '../components/landing/Testimonials';
 import Footer from '../components/common/Footer';
 import BackToTop from '../components/common/BackToTop';
+import { useSettings } from '../context/SettingsContext';
 
 function Landing() {
-  useEffect(() => {
-    document.title = "reikidevs - Solusi IT Terbaik";
-  }, []);
+  const { settings } = useSettings();
   
   return (
     <div className="landing-page">

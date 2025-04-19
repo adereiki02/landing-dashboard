@@ -2,29 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
-import { FaSave, FaUpload, FaGlobe, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import StatusModal from '../../components/common/StatusModal';
+import { FaSave, FaUpload, FaGlobe, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaCode } from 'react-icons/fa';
+import { useSettings } from '../../context/SettingsContext';
 import '../../styles/Dashboard.css';
 
 function WebsiteSettings() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState(null);
-  const [settings, setSettings] = useState({
-    siteName: 'ReikiDevs',
-    siteTagline: 'Professional Web Development Solutions',
-    logoUrl: '/images/logo.png',
-    faviconUrl: '/images/favicon.ico',
-    email: 'info@reikidevs.com',
-    phone: '+62 812 3456 7890',
-    address: 'Jl. Teknologi No. 123, Jakarta, Indonesia',
-    facebookUrl: 'https://facebook.com/reikidevs',
-    twitterUrl: 'https://twitter.com/reikidevs',
-    instagramUrl: 'https://instagram.com/reikidevs',
-    linkedinUrl: 'https://linkedin.com/company/reikidevs',
-    footerText: '© 2023 ReikiDevs. All rights reserved.',
-    metaDescription: 'ReikiDevs provides professional web development services for businesses of all sizes.',
-    metaKeywords: 'web development, mobile apps, software development, IT consulting',
-  });
+  const { settings, updateSettings, fetchSettings } = useSettings();
+  const [logoFile, setLogoFile] = useState(null);
+  const [faviconFile, setFaviconFile] = useState(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStatus, setModalStatus] = useState('success');
+  const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,55 +35,149 @@ function WebsiteSettings() {
     } else {
       navigate('/login');
     }
-    
-    // Simulate API call to fetch settings
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
   }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSettings(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Create a copy of the current settings
+    let updatedSettings = { ...settings };
+    
+    // Handle nested properties (like socialMedia.facebook)
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      updatedSettings = {
+        ...settings,
+        [parent]: {
+          ...settings[parent],
+          [child]: value
+        }
+      };
+    } else {
+      updatedSettings = {
+        ...settings,
+        [name]: value
+      };
+    }
+    
+    // Update the settings in the context
+    // We're not calling the API here, just updating the local state
+    // The actual API update happens on form submit
+    updateSettings(updatedSettings);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setError('');
+    setSuccess('');
     
-    // Simulate API call to save settings
-    setTimeout(() => {
+    try {
+      // Prepare settings for submission
+      const settingsToSave = { ...settings };
+      
+      // Remove preview properties before sending to API
+      delete settingsToSave.logoPreview;
+      delete settingsToSave.faviconPreview;
+      
+      // Ensure socialMedia is properly formatted
+      if (!settingsToSave.socialMedia) {
+        settingsToSave.socialMedia = {
+          facebook: '',
+          twitter: '',
+          instagram: '',
+          linkedin: '',
+          youtube: ''
+        };
+      }
+      
+      console.log('Saving settings...');
+      
+      // Save settings using the context
+      const result = await updateSettings(settingsToSave, true);
+      
+      if (result.success) {
+        setSuccess('Settings saved successfully!');
+        setModalStatus('success');
+        setModalMessage('Website settings have been saved successfully!');
+        setModalOpen(true);
+        
+        // Refresh settings from the server
+        await fetchSettings();
+        
+        // Force favicon update in the browser
+        if (settingsToSave.favicon) {
+          const link = document.querySelector('link[rel="icon"]');
+          if (link) {
+            link.href = settingsToSave.favicon;
+          }
+        }
+      } else {
+        setError('Failed to save settings. Please try again.');
+        setModalStatus('error');
+        setModalMessage('Failed to save website settings. Please try again.');
+        setModalOpen(true);
+      }
+      
+      // Reset file states
+      setLogoFile(null);
+      setFaviconFile(null);
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setError('Failed to save settings. Please try again.');
+      setModalStatus('error');
+      setModalMessage('An error occurred while saving settings: ' + (error.message || 'Unknown error'));
+      setModalOpen(true);
+    } finally {
       setSaving(false);
-      alert('Settings saved successfully!');
-    }, 1500);
+    }
   };
 
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // In a real app, you would upload the file to your server
-      // For now, we'll just create a local URL
-      const localUrl = URL.createObjectURL(file);
-      setSettings(prev => ({
-        ...prev,
-        logoUrl: localUrl
-      }));
+      setLogoFile(file);
+      
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Update the settings with the new logo
+        const updatedSettings = {
+          ...settings,
+          logo: reader.result,
+          logoPreview: URL.createObjectURL(file)
+        };
+        // Update the settings in the context
+        updateSettings(updatedSettings);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleFaviconUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // In a real app, you would upload the file to your server
-      // For now, we'll just create a local URL
-      const localUrl = URL.createObjectURL(file);
-      setSettings(prev => ({
-        ...prev,
-        faviconUrl: localUrl
-      }));
+      setFaviconFile(file);
+      
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Update the settings with the new favicon
+        const updatedSettings = {
+          ...settings,
+          favicon: reader.result, // Store as data URL
+          faviconPreview: URL.createObjectURL(file)
+        };
+        // Update the settings in the context
+        updateSettings(updatedSettings);
+        
+        // Force favicon update in the browser
+        const link = document.querySelector('link[rel="icon"]');
+        if (link) {
+          link.href = reader.result;
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -108,6 +196,9 @@ function WebsiteSettings() {
         </div>
         
         <form onSubmit={handleSubmit} className="settings-form">
+          {error && <div className="alert alert-danger">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
+          
           <div className="settings-section">
             <h3><FaGlobe /> General Settings</h3>
             <div className="form-group">
@@ -116,19 +207,19 @@ function WebsiteSettings() {
                 type="text"
                 id="siteName"
                 name="siteName"
-                value={settings.siteName}
+                value={settings.siteName || ''}
                 onChange={handleChange}
                 required
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="siteTagline">Site Tagline</label>
+              <label htmlFor="siteDescription">Site Description</label>
               <input
                 type="text"
-                id="siteTagline"
-                name="siteTagline"
-                value={settings.siteTagline}
+                id="siteDescription"
+                name="siteDescription"
+                value={settings.siteDescription || ''}
                 onChange={handleChange}
               />
             </div>
@@ -137,7 +228,7 @@ function WebsiteSettings() {
               <div className="form-group logo-upload">
                 <label>Logo</label>
                 <div className="logo-preview">
-                  <img src={settings.logoUrl} alt="Logo" />
+                  <img src={settings.logoPreview || settings.logo || '/images/placeholder.png'} alt="Logo" />
                 </div>
                 <div className="upload-btn-wrapper">
                   <button className="btn-upload"><FaUpload /> Choose Logo</button>
@@ -149,7 +240,7 @@ function WebsiteSettings() {
               <div className="form-group favicon-upload">
                 <label>Favicon</label>
                 <div className="favicon-preview">
-                  <img src={settings.faviconUrl} alt="Favicon" />
+                  <img src={settings.faviconPreview || settings.favicon || '/images/placeholder-favicon.png'} alt="Favicon" />
                 </div>
                 <div className="upload-btn-wrapper">
                   <button className="btn-upload"><FaUpload /> Choose Favicon</button>
@@ -163,24 +254,23 @@ function WebsiteSettings() {
           <div className="settings-section">
             <h3><FaEnvelope /> Contact Information</h3>
             <div className="form-group">
-              <label htmlFor="email"><FaEnvelope /> Email Address</label>
+              <label htmlFor="contactEmail"><FaEnvelope /> Email Address</label>
               <input
                 type="email"
-                id="email"
-                name="email"
-                value={settings.email}
+                id="contactEmail"
+                name="contactEmail"
+                value={settings.contactEmail || ''}
                 onChange={handleChange}
-                required
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="phone"><FaPhone /> Phone Number</label>
+              <label htmlFor="contactPhone"><FaPhone /> Phone Number</label>
               <input
                 type="text"
-                id="phone"
-                name="phone"
-                value={settings.phone}
+                id="contactPhone"
+                name="contactPhone"
+                value={settings.contactPhone || ''}
                 onChange={handleChange}
               />
             </div>
@@ -190,7 +280,7 @@ function WebsiteSettings() {
               <textarea
                 id="address"
                 name="address"
-                value={settings.address}
+                value={settings.address || ''}
                 onChange={handleChange}
                 rows="3"
               />
@@ -200,85 +290,109 @@ function WebsiteSettings() {
           <div className="settings-section">
             <h3>Social Media Links</h3>
             <div className="form-group">
-              <label htmlFor="facebookUrl"><FaFacebook /> Facebook URL</label>
+              <label htmlFor="socialMedia.facebook"><FaFacebook /> Facebook URL</label>
               <input
                 type="url"
-                id="facebookUrl"
-                name="facebookUrl"
-                value={settings.facebookUrl}
+                id="socialMedia.facebook"
+                name="socialMedia.facebook"
+                value={settings.socialMedia?.facebook || ''}
                 onChange={handleChange}
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="twitterUrl"><FaTwitter /> Twitter URL</label>
+              <label htmlFor="socialMedia.twitter"><FaTwitter /> Twitter URL</label>
               <input
                 type="url"
-                id="twitterUrl"
-                name="twitterUrl"
-                value={settings.twitterUrl}
+                id="socialMedia.twitter"
+                name="socialMedia.twitter"
+                value={settings.socialMedia?.twitter || ''}
                 onChange={handleChange}
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="instagramUrl"><FaInstagram /> Instagram URL</label>
+              <label htmlFor="socialMedia.instagram"><FaInstagram /> Instagram URL</label>
               <input
                 type="url"
-                id="instagramUrl"
-                name="instagramUrl"
-                value={settings.instagramUrl}
+                id="socialMedia.instagram"
+                name="socialMedia.instagram"
+                value={settings.socialMedia?.instagram || ''}
                 onChange={handleChange}
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="linkedinUrl"><FaLinkedin /> LinkedIn URL</label>
+              <label htmlFor="socialMedia.linkedin"><FaLinkedin /> LinkedIn URL</label>
               <input
                 type="url"
-                id="linkedinUrl"
-                name="linkedinUrl"
-                value={settings.linkedinUrl}
+                id="socialMedia.linkedin"
+                name="socialMedia.linkedin"
+                value={settings.socialMedia?.linkedin || ''}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="socialMedia.youtube"><FaYoutube /> YouTube URL</label>
+              <input
+                type="url"
+                id="socialMedia.youtube"
+                name="socialMedia.youtube"
+                value={settings.socialMedia?.youtube || ''}
                 onChange={handleChange}
               />
             </div>
           </div>
           
           <div className="settings-section">
-            <h3>Footer & SEO</h3>
+            <h3>SEO & Additional Settings</h3>
             <div className="form-group">
-              <label htmlFor="footerText">Footer Text</label>
-              <input
-                type="text"
-                id="footerText"
-                name="footerText"
-                value={settings.footerText}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="metaDescription">Meta Description</label>
+              <label htmlFor="metaTags">Meta Tags</label>
               <textarea
-                id="metaDescription"
-                name="metaDescription"
-                value={settings.metaDescription}
+                id="metaTags"
+                name="metaTags"
+                value={settings.metaTags || ''}
                 onChange={handleChange}
                 rows="3"
               />
-              <small>Recommended length: 150-160 characters</small>
+              <small>Enter meta tags in JSON format or comma-separated keywords</small>
             </div>
             
             <div className="form-group">
-              <label htmlFor="metaKeywords">Meta Keywords</label>
+              <label htmlFor="googleAnalyticsId">Google Analytics ID</label>
               <input
                 type="text"
-                id="metaKeywords"
-                name="metaKeywords"
-                value={settings.metaKeywords}
+                id="googleAnalyticsId"
+                name="googleAnalyticsId"
+                value={settings.googleAnalyticsId || ''}
                 onChange={handleChange}
               />
-              <small>Separate keywords with commas</small>
+              <small>Example: UA-XXXXX-Y or G-XXXXXXXX</small>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="customCss"><FaCode /> Custom CSS</label>
+              <textarea
+                id="customCss"
+                name="customCss"
+                value={settings.customCss || ''}
+                onChange={handleChange}
+                rows="5"
+              />
+              <small>Add custom CSS styles for your website</small>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="customJs"><FaCode /> Custom JavaScript</label>
+              <textarea
+                id="customJs"
+                name="customJs"
+                value={settings.customJs || ''}
+                onChange={handleChange}
+                rows="5"
+              />
+              <small>Add custom JavaScript for your website</small>
             </div>
           </div>
           
@@ -289,6 +403,15 @@ function WebsiteSettings() {
           </div>
         </form>
       </div>
+      
+      {/* Status Modal */}
+      <StatusModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        status={modalStatus}
+        message={modalMessage}
+        autoClose={true}
+      />
     </div>
   );
 }

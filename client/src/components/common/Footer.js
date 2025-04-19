@@ -1,16 +1,17 @@
 import React from 'react';
-import logoImage from '../../assets/reikidevelop.png'; // Pastikan untuk menyimpan logo di folder assets
+import { useSettings } from '../../context/SettingsContext';
 
 function Footer() {
   const year = new Date().getFullYear();
+  const { settings } = useSettings();
   
   return (
     <footer className="footer" id="contact">
       <div className="container">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src={logoImage} alt="ReiKi Develop Logo" className="footer-logo-image" />
-            <p>Solusi Digital Terbaik untuk Bisnis Anda</p>
+            <img src={settings.logo} alt={settings.siteName} className="footer-logo-image" />
+            <p>{settings.siteDescription}</p>
             
             <div className="contact-info">
               <h3>Hubungi Kami</h3>
@@ -22,18 +23,36 @@ function Footer() {
               <div className="social-links-container">
                 <h4>Ikuti Kami</h4>
                 <div className="social-links">
-                  <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="social-link whatsapp">
-                    <i className="fab fa-whatsapp"></i>
-                  </a>
-                  <a href="https://instagram.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link instagram">
-                    <i className="fab fa-instagram"></i>
-                  </a>
-                  <a href="https://facebook.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link facebook">
-                    <i className="fab fa-facebook-f"></i>
-                  </a>
-                  <a href="https://linkedin.com/reikidevs" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
-                    <i className="fab fa-linkedin-in"></i>
-                  </a>
+                  {settings.socialMedia?.whatsapp && (
+                    <a href={settings.socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="social-link whatsapp">
+                      <i className="fab fa-whatsapp"></i>
+                    </a>
+                  )}
+                  {settings.socialMedia?.instagram && (
+                    <a href={settings.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="social-link instagram">
+                      <i className="fab fa-instagram"></i>
+                    </a>
+                  )}
+                  {settings.socialMedia?.facebook && (
+                    <a href={settings.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="social-link facebook">
+                      <i className="fab fa-facebook-f"></i>
+                    </a>
+                  )}
+                  {settings.socialMedia?.linkedin && (
+                    <a href={settings.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                      <i className="fab fa-linkedin-in"></i>
+                    </a>
+                  )}
+                  {settings.socialMedia?.twitter && (
+                    <a href={settings.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="social-link twitter">
+                      <i className="fab fa-twitter"></i>
+                    </a>
+                  )}
+                  {settings.socialMedia?.youtube && (
+                    <a href={settings.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="social-link youtube">
+                      <i className="fab fa-youtube"></i>
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -66,16 +85,16 @@ function Footer() {
             <div className="footer-links-column">
               <h3>Kontak</h3>
               <ul>
-                <li>Email: info@reikidevs.com</li>
-                <li>Phone: +62-812-3456-7890</li>
-                <li>Jakarta, Indonesia</li>
+                <li>Email: {settings.contactEmail}</li>
+                <li>Phone: {settings.contactPhone}</li>
+                <li>{settings.address}</li>
               </ul>
             </div>
           </div>
         </div>
         
         <div className="footer-bottom">
-          <p>&copy; {year} Reiki Develops. All Rights Reserved.</p>
+          <p>&copy; {year} {settings.siteName}. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
