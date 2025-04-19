@@ -21,6 +21,7 @@ function PortfolioForm() {
     websiteUrl: '',
     completionDate: '',
     status: 'published',
+    projectStatus: 'completed', // Added project status (completed or progress)
     isFeatured: false
   });
   const [errors, setErrors] = useState({});
@@ -52,6 +53,7 @@ function PortfolioForm() {
         websiteUrl: portfolioData.websiteUrl || '',
         completionDate: portfolioData.completionDate ? new Date(portfolioData.completionDate).toISOString().split('T')[0] : '',
         status: portfolioData.status,
+        projectStatus: portfolioData.projectStatus || 'completed', // Added project status with default
         isFeatured: portfolioData.isFeatured
       });
       
@@ -283,6 +285,7 @@ function PortfolioForm() {
       websiteUrl: formData.websiteUrl,
       completionDate: formData.completionDate,
       status: formData.status,
+      projectStatus: formData.projectStatus,
       isFeatured: formData.isFeatured
     });
     
@@ -308,6 +311,7 @@ function PortfolioForm() {
       formDataToSend.append('websiteUrl', formData.websiteUrl || '');
       formDataToSend.append('completionDate', formData.completionDate || '');
       formDataToSend.append('status', formData.status || 'draft');
+      formDataToSend.append('projectStatus', formData.projectStatus || 'completed');
       formDataToSend.append('isFeatured', formData.isFeatured || false);
       
       // Only append file if a new one is selected
@@ -335,6 +339,7 @@ function PortfolioForm() {
         websiteUrl: formData.websiteUrl,
         completionDate: formData.completionDate,
         status: formData.status,
+        projectStatus: formData.projectStatus,
         isFeatured: formData.isFeatured,
         featuredImageFile: featuredImageFile ? featuredImageFile.name : 'None',
         imageUrls: imageUrls.length
@@ -668,7 +673,22 @@ function PortfolioForm() {
                 <div className="form-hint">Draft projects won't be visible to visitors</div>
               </div>
               
-              <div className="form-group checkbox-group">
+              <div className="form-group">
+                <label htmlFor="projectStatus">Project Status</label>
+                <select
+                  id="projectStatus"
+                  name="projectStatus"
+                  value={formData.projectStatus}
+                  onChange={handleChange}
+                >
+                  <option value="progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <div className="form-hint">Current status of the project</div>
+              </div>
+            </div>
+            
+            <div className="form-group checkbox-group">
                 <label className="checkbox-container">
                   <input
                     type="checkbox"
@@ -682,7 +702,6 @@ function PortfolioForm() {
                   Featured projects will be displayed prominently on the homepage in the featured section.
                 </div>
               </div>
-            </div>
             
             <div className="form-actions">
               <button type="submit" className="btn-primary">

@@ -14,6 +14,7 @@ exports.getAllPortfolioItems = async (req, res) => {
     const search = req.query.search || '';
     const projectType = req.query.projectType || '';
     const status = req.query.status || '';
+    const projectStatus = req.query.projectStatus || '';
     
     // Build query
     const query = {};
@@ -32,6 +33,10 @@ exports.getAllPortfolioItems = async (req, res) => {
     
     if (status) {
       query.status = status;
+    }
+    
+    if (projectStatus) {
+      query.projectStatus = projectStatus;
     }
     
     const total = await Portfolio.countDocuments(query);
@@ -91,7 +96,7 @@ exports.createPortfolioItem = async (req, res) => {
     console.log('File:', req.file);
     
     const { 
-      title, description, client, projectType, websiteUrl, completionDate, status 
+      title, description, client, projectType, websiteUrl, completionDate, status, projectStatus 
     } = req.body;
     
     // Validate required fields
@@ -172,6 +177,7 @@ exports.createPortfolioItem = async (req, res) => {
       websiteUrl: websiteUrl || '',
       completionDate: completionDate || null,
       status: status || 'published',
+      projectStatus: projectStatus || 'completed',
       order,
       isFeatured: req.body.isFeatured === 'true',
     });
@@ -197,7 +203,7 @@ exports.updatePortfolioItem = async (req, res) => {
     console.log('File:', req.file);
     
     const { 
-      title, description, client, projectType, websiteUrl, completionDate, status, isFeatured, featuredImage 
+      title, description, client, projectType, websiteUrl, completionDate, status, isFeatured, featuredImage, projectStatus
     } = req.body;
     
     // Parse JSON strings from form data
@@ -267,6 +273,7 @@ exports.updatePortfolioItem = async (req, res) => {
     portfolioItem.websiteUrl = websiteUrl !== undefined ? websiteUrl : portfolioItem.websiteUrl;
     portfolioItem.completionDate = completionDate || portfolioItem.completionDate;
     portfolioItem.status = status || portfolioItem.status;
+    portfolioItem.projectStatus = projectStatus || portfolioItem.projectStatus;
     portfolioItem.isFeatured = isFeatured !== undefined ? (isFeatured === 'true' || isFeatured === true) : portfolioItem.isFeatured;
     
     const updatedPortfolio = await portfolioItem.save();

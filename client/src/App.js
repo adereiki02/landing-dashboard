@@ -7,6 +7,7 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import NewsDetail from './pages/DetailBerita/NewsDetail';
 import NewsList from './pages/Berita/NewsList';
+import ListPortfolio from './pages/Portfolio/ListPortfolio';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import NewsManagement from './pages/Dashboard/NewsManagement';
@@ -23,6 +24,7 @@ import './styles/Auth.css';
 import './styles/NewsDetail.css';
 import './styles/NewsList.css';
 import './styles/pagination.css';
+import './styles/PortfolioList.css';
 
 
 
@@ -113,6 +115,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/berita" element={<NewsList />} />
         <Route path="/berita/:id" element={<NewsDetail />} />
+        <Route path="/portfolio" element={<ListPortfolio />} />
       </Routes>
       <SpeedInsights />
     </Router>

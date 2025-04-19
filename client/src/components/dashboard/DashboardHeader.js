@@ -21,10 +21,6 @@ function DashboardHeader() {
 
   return (
     <div className="dashboard-header">
-      <div className="header-search">
-        <FaSearch />
-        <input type="text" placeholder="Search..." />
-      </div>
       <div className="header-user">
         <div className="user-avatar">
           {user?.name?.charAt(0) || 'U'}

@@ -185,7 +185,7 @@ function NewsManagement() {
                     <td>{new Date(item.createdAt).toLocaleDateString()}</td>
                     <td>
                       <span className={`status-badge ${item.status.toLowerCase()}`}>
-                        {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                        {item.status.charAt(0).toLowerCase() + item.status.slice(1)}
                       </span>
                     </td>
                     <td>{item.viewCount}</td>

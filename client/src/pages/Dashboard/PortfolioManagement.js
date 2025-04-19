@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../../components/dashboard/Sidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
-import { FaPlus, FaEdit, FaTrash, FaSearch, FaEye } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaEye, FaTimes } from 'react-icons/fa';
 import '../../styles/Dashboard.css';
 
 function PortfolioManagement() {
@@ -15,7 +15,9 @@ function PortfolioManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const [projectTypeFilter, setProjectTypeFilter] = useState('all');
   const [featuredFilter, setFeaturedFilter] = useState('all');
+  const [projectStatusFilter, setProjectStatusFilter] = useState('all');
   const [projectTypes, setProjectTypes] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +48,7 @@ function PortfolioManagement() {
       fetchPortfolios();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, projectTypeFilter, featuredFilter, searchTerm]);
+  }, [currentPage, projectTypeFilter, featuredFilter, projectStatusFilter, searchTerm]);
 
   const fetchPortfolios = async () => {
     try {
@@ -59,6 +61,10 @@ function PortfolioManagement() {
       
       if (featuredFilter !== 'all') {
         url += `&isFeatured=${featuredFilter === 'featured'}`;
+      }
+      
+      if (projectStatusFilter !== 'all') {
+        url += `&projectStatus=${projectStatusFilter}`;
       }
       
       if (searchTerm) {
@@ -122,6 +128,18 @@ function PortfolioManagement() {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
+  const handleProjectStatusFilterChange = (e) => {
+    setProjectStatusFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const toggleSearchMode = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchTerm(''); // Clear search term when closing search
+    }
+  };
+
   const filteredPortfolios = portfolios;
 
   if (loading) {
@@ -142,34 +160,112 @@ function PortfolioManagement() {
         </div>
         
         <div className="search-filter">
-          <div className="search-box">
-            <FaSearch />
-            <input 
-              type="text" 
-              placeholder="Search by title, category or client..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select 
-            className="filter-select"
-            value={projectTypeFilter}
-            onChange={handleProjectTypeFilterChange}
-          >
-            <option value="all">All Project Types</option>
-            {projectTypes.map((type, index) => (
-              <option key={index} value={type}>{type}</option>
-            ))}
-          </select>
-          <select 
-            className="filter-select"
-            value={featuredFilter}
-            onChange={handleFeaturedFilterChange}
-          >
-            <option value="all">All Status</option>
-            <option value="featured">Featured</option>
-            <option value="not-featured">Not Featured</option>
-          </select>
+          {showSearch ? (
+            <div style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ 
+                position: 'relative', 
+                flex: 1, 
+                display: 'flex', 
+                border: '1px solid rgba(0, 102, 255, 0.15)',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0, 102, 255, 0.05)'
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  padding: '0 0.95rem',
+                  color: 'var(--primary-color)'
+                }}>
+                  <FaSearch />
+                </div>
+                <input 
+                  type="text" 
+                  placeholder="Search by title, category or client..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  autoFocus
+                  style={{ 
+                    flex: 1, 
+                    padding: '0.85rem 0.5rem 0.85rem 0', 
+                    border: 'none',
+                    fontSize: '0.95rem',
+                    fontFamily: '"Plus Jakarta Sans", sans-serif'
+                  }}
+                />
+              </div>
+              <button 
+                onClick={toggleSearchMode}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.2rem',
+                  color: '#999',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  transition: 'color 0.3s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                aria-label="Close search"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          ) : (
+            <>
+              <button 
+                onClick={toggleSearchMode} 
+                style={{ 
+                  padding: '0.85rem 1rem',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(0, 102, 255, 0.15)',
+                  backgroundColor: '#E6F0FF',
+                  color: '#0066FF',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(0, 102, 255, 0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  width: '45px',
+                  height: '45px'
+                }}
+              >
+                <FaSearch />
+              </button>
+              <select 
+                className="filter-select"
+                value={projectTypeFilter}
+                onChange={handleProjectTypeFilterChange}
+              >
+                <option value="all">All Project Types</option>
+                {projectTypes.map((type, index) => (
+                  <option key={index} value={type}>{type}</option>
+                ))}
+              </select>
+              <select 
+                className="filter-select"
+                value={featuredFilter}
+                onChange={handleFeaturedFilterChange}
+              >
+                <option value="all">All Featured Status</option>
+                <option value="featured">Featured</option>
+                <option value="not-featured">Not Featured</option>
+              </select>
+              <select 
+                className="filter-select"
+                value={projectStatusFilter}
+                onChange={handleProjectStatusFilterChange}
+              >
+                <option value="all">All Project Status</option>
+                <option value="progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </>
+          )}
         </div>
         
         <div className="portfolio-grid">
@@ -179,12 +275,15 @@ function PortfolioManagement() {
                 <div className="portfolio-image">
                   <img src={item.featuredImage} alt={item.title} />
                   {item.isFeatured && <span className="featured-badge">Featured</span>}
+                  {item.projectStatus === 'progress' && <span className="status-badge progress">In Progress</span>}
+                  {item.projectStatus === 'completed' && <span className="status-badge completed">Completed</span>}
                 </div>
                 <div className="portfolio-details">
                   <h3>{item.title}</h3>
                   <p><strong>Category:</strong> {item.projectType}</p>
                   <p><strong>Client:</strong> {item.client}</p>
                   <p><strong>Date:</strong> {new Date(item.completionDate || item.createdAt).toLocaleDateString()}</p>
+                  <p><strong>Status:</strong> {item.projectStatus === 'progress' ? 'In Progress' : 'Completed'}</p>
                 </div>
                 <div className="portfolio-actions">
                   <button 

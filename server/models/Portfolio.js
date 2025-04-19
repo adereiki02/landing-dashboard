@@ -50,6 +50,11 @@ const portfolioSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    projectStatus: {
+      type: String,
+      enum: ['progress', 'completed'],
+      default: 'completed',
+    },
     status: {
       type: String,
       enum: ['draft', 'published'],
