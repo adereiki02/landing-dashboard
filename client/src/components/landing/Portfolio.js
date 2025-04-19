@@ -64,15 +64,20 @@ function Portfolio() {
     <div className="portfolio-grid">
       {portfolioItems.map((item) => (
         <div 
-          className="portfolio-item" 
+          className="portfolio-card" 
           key={item._id}
         >
-          <div className="portfolio-image">
-            <img src={getImageUrl(item.featuredImage, 'portfolio')} alt={item.title} loading="lazy" />
-          </div>
-          <div className="portfolio-content">
-            <h3>{item.title}</h3>
-            <p>{item.projectType}</p>
+                <div className="portfolio-image">
+                  <img src={item.featuredImage} alt={item.title} />
+                  {item.isFeatured && <span className="featured-badge">Featured</span>}
+                  {item.projectStatus === 'progress' && <span className="project-status-badge progress">In Progress</span>}
+                  {item.projectStatus === 'completed' && <span className="project-status-badge completed">Completed</span>}
+                </div>
+          <div className="portfolio-details">
+                  <h3>{item.title}</h3>
+                  <p><strong>Category:</strong> {item.projectType}</p>
+                  <p><strong>Client:</strong> {item.client}</p>
+                  <p><strong>Date:</strong> {new Date(item.completionDate || item.createdAt).toLocaleDateString()}</p>
           </div>
         </div>
       ))}
