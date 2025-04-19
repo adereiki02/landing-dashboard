@@ -60,7 +60,14 @@ exports.getAllPortfolioItems = async (req, res) => {
 // Get portfolio item by ID
 exports.getPortfolioItemById = async (req, res) => {
   try {
-    const portfolioItem = await Portfolio.findById(req.params.id);
+    const id = req.params.id;
+    
+    // Validate if id is a valid ObjectId
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: 'Invalid portfolio item ID format' });
+    }
+    
+    const portfolioItem = await Portfolio.findById(id);
     
     if (!portfolioItem) {
       return res.status(404).json({ message: 'Portfolio item not found' });

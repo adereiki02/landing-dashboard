@@ -4,8 +4,6 @@ import axios from 'axios';
 import { FaSearch, FaFilter, FaTimes, FaArrowRight, FaCode, FaLaptopCode, FaRegClock } from 'react-icons/fa';
 import '../../styles/PortfolioList.css';
 
-
-
 function ListPortfolio() {
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +43,7 @@ function ListPortfolio() {
       }
       
       if (featuredFilter !== 'all') {
-        url += `&isFeatured=${featuredFilter === 'featured' ? 'true' : 'false'}`;
+        url += `&featured=${featuredFilter === 'featured' ? 'true' : 'false'}`;
       }
       
       if (searchTerm) {
@@ -56,24 +54,7 @@ function ListPortfolio() {
       url += '&status=published';
       
       const response = await axios.get(url);
-      
-      // Log the first item to check its structure
-      if (response.data.portfolioItems && response.data.portfolioItems.length > 0) {
-        console.log('First portfolio item:', response.data.portfolioItems[0]);
-        console.log('isFeatured value:', response.data.portfolioItems[0].isFeatured);
-        console.log('isFeatured type:', typeof response.data.portfolioItems[0].isFeatured);
-      }
-      
-      // Process the data - force some items to be featured for testing
-      const processedItems = response.data.portfolioItems.map((item, index) => ({
-        ...item,
-        // Make every other item featured for testing
-        isFeatured: index % 2 === 0 ? true : item.isFeatured
-      }));
-      
-      console.log('Processed items:', processedItems);
-      
-      setPortfolioItems(processedItems);
+      setPortfolioItems(response.data.portfolioItems);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -264,28 +245,34 @@ function ListPortfolio() {
               <Link to={`/portfolio/${item.slug}`} className="portfolio-link">
                 <div className="portfolio-image">
                   <img src={item.featuredImage} alt={item.title} />
-                  {item.projectStatus === 'completed' && (
-                    <div className="status-badge completed">Completed</div>
-                  )}
-                  {item.projectStatus === 'progress' && (
-                    <div className="status-badge progress">In Progress</div>
-                  )}
-                  {item.isFeatured && (
-                    <div className="featured-badge">Featured</div>
-                  )}
+                  <div className="portfolio-overlay">
+                    <span className="view-details">View Details <FaArrowRight /></span>
+                  </div>
+                  <div className="portfolio-badges">
+                    {item.featured && (
+                      <span className="status-badge featured">Featured</span>
+                    )}
+                    {item.projectStatus === 'progress' && (
+                      <span className="status-badge progress"><FaRegClock /> In Progress</span>
+                    )}
+                    {item.projectStatus === 'completed' && (
+                      <span className="status-badge completed">Completed</span>
+                    )}
+                  </div>
                 </div>
                 <div className="portfolio-details">
                   <h3>{item.title}</h3>
                   <div className="portfolio-meta">
-                    <div className="meta-item">
-                      <span><strong>Category:</strong> {item.projectType}</span>
-                    </div>
-                    <div className="meta-item">
-                      <span><strong>Client:</strong> {item.client}</span>
-                    </div>
-                    <div className="meta-item">
-                      <span><strong>Date:</strong> {new Date(item.completionDate || item.createdAt).toLocaleDateString()}</span>
-                    </div>
+                    <span className="portfolio-category"><FaCode /> {item.projectType}</span>
+                  </div>
+                  <p className="portfolio-client"><strong>Client:</strong> {item.client}</p>
+                  <div className="portfolio-tech-tags">
+                    {item.technologies && item.technologies.slice(0, 3).map((tech, index) => (
+                      <span key={index} className="tech-tag">{tech}</span>
+                    ))}
+                    {item.technologies && item.technologies.length > 3 && (
+                      <span className="tech-tag more">+{item.technologies.length - 3} more</span>
+                    )}
                   </div>
                 </div>
               </Link>

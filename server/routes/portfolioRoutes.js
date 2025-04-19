@@ -19,7 +19,9 @@ router.get('/', getAllPortfolioItems);
 router.get('/project-types', getProjectTypes);
 router.get('/featured', getFeaturedPortfolioItems);
 router.get('/slug/:slug', getPortfolioItemBySlug);
-router.get('/:id', getPortfolioItemById);
+// This route should be last as it's a catch-all for IDs
+// Add a validation to ensure id is a valid ObjectId format
+router.get('/:id([0-9a-fA-F]{24})', getPortfolioItemById);
 
 // Protected routes
 router.post('/', protect, admin, uploadPortfolioImageMiddleware, createPortfolioItem);
