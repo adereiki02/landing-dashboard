@@ -25,6 +25,41 @@ function Testimonials() {
       role: "Owner, Fadli Design",
       image: "https://randomuser.me/api/portraits/men/2.jpg",
       text: "Saya sangat puas dengan kualitas desain grafis dan videografi yang reikidevs buat untuk bisnis saya. Sangat merekomendasikan jasa mereka!"
+    },
+    {
+      id: 4,
+      name: "Dewi Kusuma",
+      role: "Founder, Batik Nusantara",
+      image: "https://randomuser.me/api/portraits/women/22.jpg",
+      text: "Berkat aplikasi e-commerce yang dikembangkan oleh reikidevs, penjualan batik kami meningkat hingga 65% dalam 6 bulan terakhir. Proses pengembangan yang sangat kolaboratif dan hasilnya melebihi ekspektasi kami."
+    },
+    {
+      id: 5,
+      name: "Raden Wijaya",
+      role: "CTO, Fintech Sejahtera",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
+      text: "Kami memilih reikidevs untuk mengembangkan platform fintech kami karena reputasi mereka dalam keamanan sistem. Hasilnya luar biasa, dengan zero security breach selama 2 tahun beroperasi dan antarmuka yang sangat user-friendly."
+    },
+    {
+      id: 6,
+      name: "Anisa Wijayanti",
+      role: "Digital Marketing Manager, Toko Sehat",
+      image: "https://randomuser.me/api/portraits/women/45.jpg",
+      text: "Strategi digital marketing yang dirancang oleh reikidevs berhasil meningkatkan traffic website kami sebesar 120% dan konversi penjualan naik 35%. Tim mereka sangat responsif dan selalu update dengan tren terbaru."
+    },
+    {
+      id: 7,
+      name: "Hendra Gunawan",
+      role: "Direktur, PT Konstruksi Andalan",
+      image: "https://randomuser.me/api/portraits/men/67.jpg",
+      text: "Website company profile yang dibuat oleh reikidevs sangat membantu kami mendapatkan klien-klien besar. Desainnya profesional dan mencerminkan identitas perusahaan kami dengan sempurna."
+    },
+    {
+      id: 8,
+      name: "Maya Sari",
+      role: "Owner, Kuliner Nusantara",
+      image: "https://randomuser.me/api/portraits/women/28.jpg",
+      text: "Aplikasi pemesanan online yang dikembangkan reikidevs telah mengubah bisnis restoran kami. Proses pemesanan menjadi lebih efisien dan pelanggan sangat menyukai kemudahannya. Terima kasih reikidevs!"
     }
   ];
 

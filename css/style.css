@@ -1,0 +1,155 @@
+/* Styling untuk section paket layanan */
+.services-section {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.section-title p {
+    color: #666;
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.package-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.package-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.package-header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.package-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.package-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #4e73df;
+    margin-bottom: 10px;
+}
+
+.package-price .old-price {
+    font-size: 20px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 10px;
+}
+
+.package-price-range {
+    font-size: 28px;
+    font-weight: 700;
+    color: #4e73df;
+    margin-bottom: 10px;
+}
+
+.package-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.package-features {
+    flex-grow: 1;
+    margin-bottom: 25px;
+}
+
+.package-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.package-features li {
+    padding: 8px 0;
+    color: #555;
+    display: flex;
+    align-items: flex-start;
+}
+
+.package-features li i {
+    color: #4e73df;
+    margin-right: 10px;
+    font-size: 16px;
+    margin-top: 3px;
+}
+
+.package-button {
+    text-align: center;
+    margin-top: auto;
+}
+
+.btn-package {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #4e73df;
+    color: #fff;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-package:hover {
+    background-color: #2e59d9;
+    transform: translateY(-3px);
+}
+
+.highlight-package {
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #4e73df;
+}
+
+.highlight-badge {
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background-color: #4e73df;
+    color: #fff;
+    padding: 8px 40px;
+    font-size: 14px;
+    font-weight: 600;
+    transform: rotate(45deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .package-card {
+        margin-bottom: 30px;
+    }
+}
