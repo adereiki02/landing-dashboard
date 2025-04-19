@@ -102,13 +102,13 @@ function Navbar({ visible = true }) {
             <button onClick={() => scrollToSection('features')}>Layanan</button>
           </li>
           <li className="nav-item">
-            <button onClick={() => scrollToSection('news')}>Berita</button>
+            <button onClick={() => scrollToSection('news')}>Artikel</button>
           </li>
           <li className="nav-item">
             <button onClick={() => scrollToSection('portfolio')}>Portfolio</button>
           </li>
           <li className="nav-item">
-            <button onClick={() => scrollToSection('partners')}>Mitra Kerjasama</button>
+            <button onClick={() => scrollToSection('partners')}>Mitra</button>
           </li>
           <li className="nav-item">
             <button onClick={() => scrollToSection('testimonials')}>Testimonial</button>

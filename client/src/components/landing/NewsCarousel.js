@@ -59,7 +59,7 @@ function NewsCarousel() {
       <section id="news" className="news-section">
         <div className="container">
           <div className="section-header">
-            <h2>Berita Terbaru</h2>
+            <h2>Artikel dan Berita Terbaru</h2>
             <p>Memuat berita...</p>
           </div>
         </div>
@@ -72,7 +72,7 @@ function NewsCarousel() {
       <section id="news" className="news-section">
         <div className="container">
           <div className="section-header">
-            <h2>Berita Terbaru</h2>
+            <h2>Artikel dan Berita Terbaru</h2>
             <p>{error}</p>
           </div>
         </div>
@@ -85,7 +85,7 @@ function NewsCarousel() {
       <section id="news" className="news-section">
         <div className="container">
           <div className="section-header">
-            <h2>Berita Terbaru</h2>
+            <h2>Artikel dan Berita Terbaru</h2>
             <p>Belum ada berita yang tersedia</p>
           </div>
         </div>
@@ -97,7 +97,7 @@ function NewsCarousel() {
     <section id="news" className="news-section">
       <div className="container">
         <div className="section-header">
-          <h2>Berita Terbaru</h2>
+          <h2>Artikel dan Berita Terbaru</h2>
           <p>Informasi terkini tentang proyek dan aktivitas reikidevs</p>
         </div>
         
