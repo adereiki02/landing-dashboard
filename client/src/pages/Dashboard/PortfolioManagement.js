@@ -275,8 +275,8 @@ function PortfolioManagement() {
                 <div className="portfolio-image">
                   <img src={item.featuredImage} alt={item.title} />
                   {item.isFeatured && <span className="featured-badge">Featured</span>}
-                  {item.projectStatus === 'progress' && <span className="status-badge progress">In Progress</span>}
-                  {item.projectStatus === 'completed' && <span className="status-badge completed">Completed</span>}
+                  {item.projectStatus === 'progress' && <span className="project-status-badge progress">In Progress</span>}
+                  {item.projectStatus === 'completed' && <span className="project-status-badge completed">Completed</span>}
                 </div>
                 <div className="portfolio-details">
                   <h3>{item.title}</h3>
