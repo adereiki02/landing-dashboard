@@ -17,8 +17,8 @@ const config = {
   
   // Frontend URL
   frontendUrl: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL_PROD
-    : process.env.FRONTEND_URL_DEV,
+    ? process.env.FRONTEND_URL_PROD || 'https://reikidevs-official.vercel.app'
+    : process.env.FRONTEND_URL_DEV || 'http://localhost:3000',
   
   // Backend URL
   backendUrl: process.env.NODE_ENV === 'production'
